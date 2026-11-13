@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HERON 字标 · 交互光影版</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0C0E10; }
+  .heron-stage { min-height: 100%; display: grid; place-items: center; padding: 6vw 16px; box-sizing: border-box; touch-action: pan-y pinch-zoom; cursor: crosshair; background: radial-gradient(560px circle at var(--lx, 30%) var(--ly, 30%), rgba(160, 174, 190, 0.25), rgba(160, 174, 190, 0.08) 45%, rgba(12, 14, 16, 0) 72%), #0C0E10; position: relative; }
+  .heron-stage::after { content: ""; position: absolute; inset: 0; background: rgba(255, 255, 255, var(--flash, 0)); pointer-events: none; }
+  .heron-stage svg { width: min(940px, 90vw); height: auto; display: block; overflow: visible; }
+  @property --lx { syntax: "<percentage>"; inherits: false; initial-value: 30%; } @property --ly { syntax: "<percentage>"; inherits: false; initial-value: 30%; } @media (prefers-reduced-motion: reduce) { svg.live [data-joint] { transform: none; } }
+</style><link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js"><noscript><style>svg.live [data-joint] { transform: none; }</style></noscript></head><body>
+<!-- 放进网站：复制下面这个 div（含里面的 svg）；上面 style 里 .heron-stage 开头的三条规则和紧跟着的 @property、@media 规则；
+     head 里 style 后面的 modulepreload 和 noscript 两行；以及页面最后的两个 script：
+     第一个是动画脚本；第二个（type="module"）是 3D 相机，会从 jsDelivr 加载 three@0.160.0，面向国内访问时建议把这个文件放到自己的服务器上。
+     开场：机械臂抬起，相机找机位、拍第一张；之后机械臂跟着鼠标探身、镜头转过来看，光跟着鼠标走，影子落向另一边；点一下拍一张。 -->
+<div class="heron-stage" id="heronStage"><svg id="heronSvg" class="live" viewBox="-12 -139.7 721 305.2" role="img" aria-label="HERON 字标，拉丝铝质感：字母 H 的右竖长成机械臂，末端的相机会转头、会拍照"><defs><linearGradient id="mLliveS" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="100"><stop offset="0" stop-color="#F4F6F8"/><stop offset="0.16" stop-color="#E2E6EA"/><stop offset="0.52" stop-color="#A9B1B9"/><stop offset="0.8" stop-color="#C0C6CC"/><stop offset="1" stop-color="#E3E7EB"/></linearGradient><linearGradient id="mAliveS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2F4F6"/><stop offset="0.5" stop-color="#B5BCC3"/><stop offset="1" stop-color="#8E969E"/></linearGradient><radialGradient id="mXliveS" cx="0.38" cy="0.34" r="0.75"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.45" stop-color="#C3C9CF"/><stop offset="1" stop-color="#7E868E"/></radialGradient><linearGradient id="mLreflS" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="100"><stop offset="0" stop-color="#F4F6F8"/><stop offset="0.16" stop-color="#E2E6EA"/><stop offset="0.52" stop-color="#A9B1B9"/><stop offset="0.8" stop-color="#C0C6CC"/><stop offset="1" stop-color="#E3E7EB"/></linearGradient><linearGradient id="mAreflS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2F4F6"/><stop offset="0.5" stop-color="#B5BCC3"/><stop offset="1" stop-color="#8E969E"/></linearGradient><radialGradient id="mXreflS" cx="0.38" cy="0.34" r="0.75"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.45" stop-color="#C3C9CF"/><stop offset="1" stop-color="#7E868E"/></radialGradient><linearGradient id="k3plate0CS" gradientUnits="userSpaceOnUse" x1="-12.3" y1="-1.08" x2="9.39" y2="0.82"><stop offset="0.07" stop-color="#9FA7B0"/><stop offset="0.21" stop-color="#A1A9B2"/><stop offset="0.36" stop-color="#A3ABB4"/><stop offset="0.5" stop-color="#A4ACB5"/><stop offset="0.64" stop-color="#A5AEB6"/><stop offset="0.79" stop-color="#727982"/><stop offset="0.93" stop-color="#5B626A"/></linearGradient><linearGradient id="k3plateF1CS" gradientUnits="userSpaceOnUse" x1="0.07" y1="0.24" x2="0.48" y2="1.81"><stop offset="0.07" stop-color="#6D747C"/><stop offset="0.21" stop-color="#5C646C"/><stop offset="0.36" stop-color="#596068"/><stop offset="0.79" stop-color="#5A6169"/><stop offset="0.93" stop-color="#575E66"/></linearGradient><linearGradient id="k3plateF2CS" gradientUnits="userSpaceOnUse" x1="4.64" y1="-4.64" x2="-5.82" y2="5.82"><stop offset="0.07" stop-color="#282B2F"/><stop offset="0.21" stop-color="#282C2F"/><stop offset="0.36" stop-color="#494F54"/><stop offset="0.5" stop-color="#4E545A"/><stop offset="0.64" stop-color="#4D5258"/><stop offset="0.93" stop-color="#4D5258"/></linearGradient><linearGradient id="k3plateF3CS" gradientUnits="userSpaceOnUse" x1="0.09" y1="-1.02" x2="-0.06" y2="0.72"><stop offset="0.07" stop-color="#BDC5CE"/><stop offset="0.21" stop-color="#B8C1C9"/><stop offset="0.36" stop-color="#B6BFC8"/><stop offset="0.5" stop-color="#B6BEC7"/><stop offset="0.79" stop-color="#A4ACB4"/><stop offset="0.93" stop-color="#828B93"/></linearGradient><linearGradient id="k3body4CS" gradientUnits="userSpaceOnUse" x1="-18.35" y1="-1.61" x2="12.37" y2="1.08"><stop offset="0.07" stop-color="#C8CED3"/><stop offset="0.21" stop-color="#D2D7DB"/><stop offset="0.36" stop-color="#D6DADF"/><stop offset="0.64" stop-color="#BBC2C8"/><stop offset="0.79" stop-color="#878E96"/><stop offset="0.93" stop-color="#828990"/></linearGradient><linearGradient id="k3bodyF5CS" gradientUnits="userSpaceOnUse" x1="-7.42" y1="-15.91" x2="0.65" y2="1.4"><stop offset="0.07" stop-color="#888F96"/><stop offset="0.21" stop-color="#838A92"/><stop offset="0.36" stop-color="#848B93"/><stop offset="0.5" stop-color="#828A92"/><stop offset="0.64" stop-color="#7F868E"/><stop offset="0.79" stop-color="#7C838B"/><stop offset="0.93" stop-color="#757D84"/></linearGradient><linearGradient id="k3bodyF6CS" gradientUnits="userSpaceOnUse" x1="2.28" y1="-26.05" x2="1.99" y2="-22.69"><stop offset="0.07" stop-color="#9EA3A9"/><stop offset="0.21" stop-color="#A0A6AB"/><stop offset="0.36" stop-color="#A3A8AE"/><stop offset="0.5" stop-color="#A5AAB0"/><stop offset="0.64" stop-color="#A5ABB0"/><stop offset="0.79" stop-color="#A8ADB3"/><stop offset="0.93" stop-color="#B1B7BC"/></linearGradient><linearGradient id="k3bodyF7CS" gradientUnits="userSpaceOnUse" x1="11.28" y1="-0.99" x2="-15.16" y2="1.33"><stop offset="0.07" stop-color="#54595F"/><stop offset="0.21" stop-color="#7D848B"/><stop offset="0.36" stop-color="#878E94"/><stop offset="0.5" stop-color="#898F96"/><stop offset="0.79" stop-color="#888E95"/><stop offset="0.93" stop-color="#73797F"/></linearGradient><linearGradient id="k3bodyF8CS" gradientUnits="userSpaceOnUse" x1="1.9" y1="-21.72" x2="0.14" y2="-1.63"><stop offset="0.07" stop-color="#E8EBEE"/><stop offset="0.21" stop-color="#E7EAED"/><stop offset="0.36" stop-color="#E2E6E9"/><stop offset="0.5" stop-color="#DCE0E5"/><stop offset="0.64" stop-color="#D4D9DE"/><stop offset="0.79" stop-color="#CAD1D7"/><stop offset="0.93" stop-color="#B9C0C7"/></linearGradient><linearGradient id="k3hump9CS" gradientUnits="userSpaceOnUse" x1="4.12" y1="-0.36" x2="-6.95" y2="0.61"><stop offset="0.07" stop-color="#8D949B"/><stop offset="0.21" stop-color="#969DA4"/><stop offset="0.36" stop-color="#BCC2C8"/><stop offset="0.5" stop-color="#DDE1E4"/><stop offset="0.64" stop-color="#DFE3E6"/><stop offset="0.79" stop-color="#E2E6E9"/><stop offset="0.93" stop-color="#CDD3D8"/></linearGradient><linearGradient id="k3humpF10CS" gradientUnits="userSpaceOnUse" x1="-11.3" y1="-24.24" x2="-9.35" y2="-20.04"><stop offset="0.07" stop-color="#969CA3"/><stop offset="0.21" stop-color="#9299A0"/><stop offset="0.36" stop-color="#90979E"/><stop offset="0.5" stop-color="#8F969D"/><stop offset="0.64" stop-color="#8D949B"/><stop offset="0.79" stop-color="#8C939A"/><stop offset="0.93" stop-color="#80888F"/></linearGradient><linearGradient id="k3humpF11CS" gradientUnits="userSpaceOnUse" x1="0" y1="-30.82" x2="0" y2="-29.96"><stop offset="0.07" stop-color="#9DA2A8"/><stop offset="0.21" stop-color="#9EA4A9"/><stop offset="0.36" stop-color="#A1A7AD"/><stop offset="0.5" stop-color="#A4A9AF"/><stop offset="0.64" stop-color="#A6ACB2"/><stop offset="0.79" stop-color="#ACB2B7"/><stop offset="0.93" stop-color="#B2B8BE"/></linearGradient><linearGradient id="k3humpF12CS" gradientUnits="userSpaceOnUse" x1="2.48" y1="-28.37" x2="2.09" y2="-23.86"><stop offset="0.07" stop-color="#E6E9EC"/><stop offset="0.21" stop-color="#ECEFF1"/><stop offset="0.36" stop-color="#EDEFF2"/><stop offset="0.64" stop-color="#EBEEF1"/><stop offset="0.79" stop-color="#E9EDEF"/><stop offset="0.93" stop-color="#C8CED4"/></linearGradient><linearGradient id="k3dial13CS" gradientUnits="userSpaceOnUse" x1="-2.29" y1="-26.16" x2="-2.1" y2="-24.04"><stop offset="0.07" stop-color="#959A9E"/><stop offset="0.21" stop-color="#B5B9BC"/><stop offset="0.36" stop-color="#CED1D5"/><stop offset="0.5" stop-color="#C3C7CC"/><stop offset="0.64" stop-color="#A1A7AD"/><stop offset="0.79" stop-color="#7C838B"/><stop offset="0.93" stop-color="#7B8289"/></linearGradient><linearGradient id="k3button14CS" gradientUnits="userSpaceOnUse" x1="-4.75" y1="-1.27" x2="-2.34" y2="-0.63"><stop offset="0.07" stop-color="#B3B7BC"/><stop offset="0.21" stop-color="#D7DADD"/><stop offset="0.36" stop-color="#E3E5E7"/><stop offset="0.5" stop-color="#C9CDD1"/><stop offset="0.64" stop-color="#C0C5CA"/><stop offset="0.79" stop-color="#BCC1C6"/><stop offset="0.93" stop-color="#A0A6AD"/></linearGradient><linearGradient id="k3mount15CS" gradientUnits="userSpaceOnUse" x1="-2.8" y1="-1.62" x2="7.24" y2="4.18"><stop offset="0.07" stop-color="#CACDD0"/><stop offset="0.21" stop-color="#CED2D5"/><stop offset="0.36" stop-color="#90979E"/><stop offset="0.5" stop-color="#858C93"/><stop offset="0.64" stop-color="#82888F"/><stop offset="0.79" stop-color="#767D83"/><stop offset="0.93" stop-color="#646A71"/></linearGradient><linearGradient id="k3barrel116CS" gradientUnits="userSpaceOnUse" x1="-1.59" y1="-18.2" x2="-0.41" y2="-4.64"><stop offset="0.07" stop-color="#969CA3"/><stop offset="0.21" stop-color="#B7BEC6"/><stop offset="0.36" stop-color="#D2D8DE"/><stop offset="0.5" stop-color="#F5F7F8"/><stop offset="0.64" stop-color="#79828A"/><stop offset="0.79" stop-color="#6E767F"/><stop offset="0.93" stop-color="#676E75"/></linearGradient><linearGradient id="k3focusBack17CS" gradientUnits="userSpaceOnUse" x1="5.27" y1="1.92" x2="10.4" y2="3.78"><stop offset="0.07" stop-color="#DFE1E4"/><stop offset="0.21" stop-color="#C2C7CB"/><stop offset="0.36" stop-color="#8E959C"/><stop offset="0.64" stop-color="#91989E"/><stop offset="0.79" stop-color="#8E949A"/><stop offset="0.93" stop-color="#848A91"/></linearGradient><linearGradient id="k3knurl18CS" gradientUnits="userSpaceOnUse" x1="1.84" y1="-21.06" x2="0.55" y2="-6.23"><stop offset="0.07" stop-color="#8E969E"/><stop offset="0.21" stop-color="#98A0A9"/><stop offset="0.36" stop-color="#9098A0"/><stop offset="0.5" stop-color="#89919A"/><stop offset="0.64" stop-color="#868E96"/><stop offset="0.79" stop-color="#838B94"/><stop offset="0.93" stop-color="#626A72"/></linearGradient><linearGradient id="k3focusFront19CS" gradientUnits="userSpaceOnUse" x1="12.98" y1="3.48" x2="18.46" y2="4.95"><stop offset="0.07" stop-color="#CFD2D6"/><stop offset="0.21" stop-color="#9FA5AB"/><stop offset="0.36" stop-color="#8B9198"/><stop offset="0.5" stop-color="#858C92"/><stop offset="0.64" stop-color="#7C8389"/><stop offset="0.79" stop-color="#71777E"/><stop offset="0.93" stop-color="#656B72"/></linearGradient><linearGradient id="k3barrel220CS" gradientUnits="userSpaceOnUse" x1="-1.47" y1="-16.82" x2="-0.3" y2="-3.43"><stop offset="0.07" stop-color="#989EA5"/><stop offset="0.21" stop-color="#B8BFC6"/><stop offset="0.36" stop-color="#D2D8DE"/><stop offset="0.5" stop-color="#F7F8F9"/><stop offset="0.64" stop-color="#7C848C"/><stop offset="0.79" stop-color="#6E767E"/><stop offset="0.93" stop-color="#686F77"/></linearGradient><linearGradient id="k3aperture21CS" gradientUnits="userSpaceOnUse" x1="-2.62" y1="-14.86" x2="-0.01" y2="-0.08"><stop offset="0.07" stop-color="#B9BDC0"/><stop offset="0.21" stop-color="#DCDFE1"/><stop offset="0.36" stop-color="#D9DDE0"/><stop offset="0.5" stop-color="#BABFC4"/><stop offset="0.64" stop-color="#7F868D"/><stop offset="0.79" stop-color="#8A9197"/><stop offset="0.93" stop-color="#798086"/></linearGradient><linearGradient id="k3barrel322CS" gradientUnits="userSpaceOnUse" x1="0" y1="-18.61" x2="0" y2="-4.82"><stop offset="0.07" stop-color="#949BA1"/><stop offset="0.21" stop-color="#B5BCC3"/><stop offset="0.36" stop-color="#CDD4DA"/><stop offset="0.5" stop-color="#FAFBFC"/><stop offset="0.64" stop-color="#818992"/><stop offset="0.79" stop-color="#6E767E"/><stop offset="0.93" stop-color="#676E75"/></linearGradient><linearGradient id="k3hood23CS" gradientUnits="userSpaceOnUse" x1="26.39" y1="-31.45" x2="13.38" y2="-15.94"><stop offset="0.07" stop-color="#8C9298"/><stop offset="0.21" stop-color="#9FA4A9"/><stop offset="0.36" stop-color="#ABAFB3"/><stop offset="0.5" stop-color="#B2B6BA"/><stop offset="0.64" stop-color="#A6ABB1"/><stop offset="0.79" stop-color="#7F868D"/><stop offset="0.93" stop-color="#676E74"/></linearGradient><linearGradient id="k3hoodInner24CS" gradientUnits="userSpaceOnUse" x1="2.1" y1="-24.03" x2="0.36" y2="-4.12"><stop offset="0.07" stop-color="#454C53"/><stop offset="0.21" stop-color="#484F57"/><stop offset="0.36" stop-color="#616971"/><stop offset="0.5" stop-color="#8D959F"/><stop offset="0.64" stop-color="#7F8790"/><stop offset="0.79" stop-color="#757D85"/><stop offset="0.93" stop-color="#666C73"/></linearGradient><linearGradient id="k3retain25CS" gradientUnits="userSpaceOnUse" x1="34.46" y1="0" x2="38.96" y2="0"><stop offset="0.07" stop-color="#2F343A"/><stop offset="0.93" stop-color="#2F343A"/></linearGradient><linearGradient id="k3glass26CS" gradientUnits="userSpaceOnUse" x1="39.18" y1="-14.26" x2="30.58" y2="-11.13"><stop offset="0.07" stop-color="#595D67"/><stop offset="0.21" stop-color="#515666"/><stop offset="0.36" stop-color="#4C536B"/><stop offset="0.5" stop-color="#474F69"/><stop offset="0.64" stop-color="#42475E"/><stop offset="0.79" stop-color="#3F4054"/><stop offset="0.93" stop-color="#3C3A4B"/></linearGradient><clipPath id="k3clipKnurlCS"><path d="M15.01 -19.88 15.11 -19.93 15.89 -19.93 16.11 -19.86 16.96 -19.85 17.18 -19.79 18.1 -19.78 18.32 -19.72 19.18 -19.71 19.4 -19.65 20.32 -19.64 20.41 -19.59 20.38 -19.51 19.93 -19.25 19.32 -18.64 18.87 -17.95 18.3 -16.74 17.87 -15.38 17.66 -14.45 17.57 -13.75 17.5 -13.53 17.5 -13.18 17.43 -12.96 17.43 -12.32 17.36 -12.1 17.36 -10.11 17.43 -9.82 17.43 -9.25 17.5 -9.03 17.58 -8.26 17.8 -7.33 18.08 -6.48 18.51 -5.62 18.93 -5.04 19.15 -4.82 19.45 -4.63 19.45 -4.58 18.61 -4.57 18.39 -4.64 17.47 -4.65 17.25 -4.71 16.4 -4.72 16.18 -4.78 15.25 -4.79 15.03 -4.85 14.19 -4.87 14.02 -5.06 13.72 -5.11 13.59 -5.34 13.34 -5.37 13.23 -5.55 13.2 -5.81 12.9 -5.93 12.84 -6.31 12.78 -6.39 12.59 -6.48 12.48 -7.02 12.3 -7.19 12.27 -7.67 12.18 -7.85 12.02 -7.98 12 -8.39 12.04 -8.54 11.86 -8.9 11.85 -9.53 11.72 -9.9 11.78 -10.46 11.64 -10.96 11.77 -11.48 11.65 -11.9 11.66 -12.09 11.78 -12.47 11.72 -13.1 11.85 -13.47 11.87 -14.24 12.04 -14.61 12 -14.75 12.01 -15.17 12.27 -15.62 12.3 -16.17 12.49 -16.41 12.58 -17.02 12.82 -17.29 12.87 -17.74 13.18 -18 13.23 -18.31 13.3 -18.45 13.53 -18.57 13.68 -19 13.99 -19.12 14.15 -19.46 14.43 -19.54 14.62 -19.77 14.95 -19.8Z"/></clipPath><linearGradient id="kMotorCS" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6B727A"/><stop offset="0.35" stop-color="#C0C6CC"/><stop offset="0.7" stop-color="#8E969E"/><stop offset="1" stop-color="#5E666E"/></linearGradient><radialGradient id="kFlashCS"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.25" stop-color="#FFFFFF" stop-opacity="0.9"/><stop offset="0.6" stop-color="#EAF2FF" stop-opacity="0.35"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient><filter id="fxLiveS" filterUnits="userSpaceOnUse" x="-30" y="-165.7" width="757" height="307.2" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.005 0.85" numOctaves="2" seed="11" result="n"/><feColorMatrix in="n" type="matrix" values="0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 0 1" result="g"/><feGaussianBlur in="SourceAlpha" stdDeviation="1.15" result="b"/><feDiffuseLighting in="b" surfaceScale="2.6" diffuseConstant="1.25" lighting-color="#FFFFFF" result="d"><fePointLight id="ldS" x="-30" y="-125.7" z="210"/></feDiffuseLighting><feSpecularLighting in="b" surfaceScale="2.6" specularConstant="1.05" specularExponent="34" lighting-color="#FFFFFF" result="s"><fePointLight id="lsS" x="-30" y="-125.7" z="150"/></feSpecularLighting><feComposite in="s" in2="SourceAlpha" operator="in" result="si"/><feComposite in="SourceGraphic" in2="d" operator="arithmetic" k1="0.72" k2="0.36" k3="0" k4="0" result="sh"/><feComposite in="sh" in2="g" operator="arithmetic" k1="0" k2="0.86" k3="0.14" k4="0" result="t"/><feComposite in="t" in2="si" operator="arithmetic" k1="0" k2="1" k3="0.9" k4="0" result="l"/><feComposite in="l" in2="SourceAlpha" operator="in" result="metal"/><feGaussianBlur in="SourceAlpha" stdDeviation="2.8" result="sb"/><feOffset id="soffS" in="sb" dx="4" dy="6" result="so"/><feColorMatrix in="so" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.92 0" result="shadow"/><feMerge><feMergeNode in="shadow"/><feMergeNode in="metal"/></feMerge></filter><filter id="fxCamS" filterUnits="userSpaceOnUse" x="-30" y="-165.7" width="757" height="307.2" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="2.8" result="b"/><feOffset id="soffcS" in="b" dx="4" dy="6" result="o"/><feColorMatrix in="o" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.92 0" result="s"/><feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="fadeS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><mask id="reflMaskS" maskUnits="userSpaceOnUse" x="-40" y="101.5" width="777" height="64"><rect x="-40" y="101.5" width="777" height="64" fill="url(#fadeS)"/></mask></defs><g mask="url(#reflMaskS)" opacity="0.2"><g transform="translate(0 203) scale(1 -1)"><g fill="url(#mLreflS)"><g transform="translate(0 0)"><path d="M0 0H13.5V100H0Z"/><path d="M99.5 7.5H113V100H99.5Z"/><path d="M13 44H100V55H13Z"/></g><g transform="translate(153 0)"><path d="M0 0H13.5V100H0Z"/><path d="M0 0H96V11H0Z"/><path d="M0 44H89.28V55H0Z"/><path d="M0 89H96V100H0Z"/></g><g transform="translate(282 0)"><path d="M0 0H13.5V100H0Z"/><path d="M54.32 51.5H71.4L107 100H89.92Z"/><path fill-rule="evenodd" d="M0 0H71.44A30.21 28.5 0 0 1 71.44 57H0ZM13.5 11H71.44A16.71 17.5 0 0 1 71.44 46H13.5Z"/></g><g transform="translate(425 0)"><path fill-rule="evenodd" d="M116 50C116 81.93 93.96 101.5 58 101.5C22.04 101.5 0 81.93 0 50C0 18.07 22.04 -1.5 58 -1.5C93.96 -1.5 116 18.07 116 50ZM101.69 50C101.69 74.7 85.09 89.84 58 89.84C30.91 89.84 14.31 74.7 14.31 50C14.31 25.3 30.91 10.16 58 10.16C85.09 10.16 101.69 25.3 101.69 50Z"/></g><g transform="translate(577 0)"><path d="M0 0H13.5V100H0Z"/><path d="M106.5 0H120V100H106.5Z"/><path d="M0 0H19.87L120 100H100.13Z"/></g></g><g fill="url(#mAreflS)"><path d="M112.32 4.71L101.93 -44.2L89.78 -41.62L100.18 7.29Z"/><path d="M97.15 -36.83L149.97 -48.06L147.38 -60.21L94.56 -48.98Z"/><path fill-rule="evenodd" d="M99.24 6A7.01 7.01 0 1 1 113.26 6A7.01 7.01 0 1 1 99.24 6Z"/><path fill-rule="evenodd" d="M88.84 -42.91A7.01 7.01 0 1 1 102.86 -42.91A7.01 7.01 0 1 1 88.84 -42.91Z"/><path fill-rule="evenodd" d="M141.66 -54.13A7.01 7.01 0 1 1 155.68 -54.13A7.01 7.01 0 1 1 141.66 -54.13Z"/></g></g></g><g filter="url(#fxLiveS)"><g fill="url(#mLliveS)"><g transform="translate(0 0)"><path d="M0 0H13.5V100H0Z"/><path d="M99.5 7.5H113V100H99.5Z"/><path d="M13 44H100V55H13Z"/></g><g transform="translate(153 0)"><path d="M0 0H13.5V100H0Z"/><path d="M0 0H96V11H0Z"/><path d="M0 44H89.28V55H0Z"/><path d="M0 89H96V100H0Z"/></g><g transform="translate(282 0)"><path d="M0 0H13.5V100H0Z"/><path d="M54.32 51.5H71.4L107 100H89.92Z"/><path fill-rule="evenodd" d="M0 0H71.44A30.21 28.5 0 0 1 71.44 57H0ZM13.5 11H71.44A16.71 17.5 0 0 1 71.44 46H13.5Z"/></g><g transform="translate(425 0)"><path fill-rule="evenodd" d="M116 50C116 81.93 93.96 101.5 58 101.5C22.04 101.5 0 81.93 0 50C0 18.07 22.04 -1.5 58 -1.5C93.96 -1.5 116 18.07 116 50ZM101.69 50C101.69 74.7 85.09 89.84 58 89.84C30.91 89.84 14.31 74.7 14.31 50C14.31 25.3 30.91 10.16 58 10.16C85.09 10.16 101.69 25.3 101.69 50Z"/></g><g transform="translate(577 0)"><path d="M0 0H13.5V100H0Z"/><path d="M106.5 0H120V100H106.5Z"/><path d="M0 0H19.87L120 100H100.13Z"/></g></g><g fill="url(#mAliveS)"><g data-joint="shoulder" transform="rotate(35 106.25 6)"><path d="M112.32 4.71L101.93 -44.2L89.78 -41.62L100.18 7.29Z"/><path fill-rule="evenodd" d="M88.84 -42.91A7.01 7.01 0 1 1 102.86 -42.91A7.01 7.01 0 1 1 88.84 -42.91Z"/><g data-joint="elbow" transform="rotate(-35 95.85 -42.91)"><path d="M97.15 -36.83L149.97 -48.06L147.38 -60.21L94.56 -48.98Z"/><path fill-rule="evenodd" d="M141.66 -54.13A7.01 7.01 0 1 1 155.68 -54.13A7.01 7.01 0 1 1 141.66 -54.13Z"/><g data-joint="wrist" transform="rotate(0 148.67 -54.13)"><path d="M143.67 -69.14H153.67V-54.13H143.67Z"/></g><circle cx="95.85" cy="-42.91" r="3.1" fill="url(#mXliveS)" stroke="#5E666E" stroke-opacity="0.55" stroke-width="0.5"/><circle cx="148.67" cy="-54.13" r="3.1" fill="url(#mXliveS)" stroke="#5E666E" stroke-opacity="0.55" stroke-width="0.5"/></g></g><path fill-rule="evenodd" d="M99.24 6A7.01 7.01 0 1 1 113.26 6A7.01 7.01 0 1 1 99.24 6Z"/><circle cx="106.25" cy="6" r="3.1" fill="url(#mXliveS)" stroke="#5E666E" stroke-opacity="0.55" stroke-width="0.5"/></g></g><g filter="url(#fxCamS)"><g data-joint="shoulder" transform="rotate(35 106.25 6)"><g data-joint="elbow" transform="rotate(-35 95.85 -42.91)"><g data-joint="wrist" transform="rotate(0 148.67 -54.13)"><g transform="translate(148.67 -74.74)"><rect x="-5.5" y="0" width="11" height="6.6" rx="1.4" fill="url(#kMotorCS)"/><rect x="-5.5" y="0" width="11" height="1" fill="#E2E6EA" opacity="0.7"/></g><g id="camHeadS" transform="translate(148.67 -74.74)"><path d="M-4.71 -30.96 -1.4 -30.78 -1.18 -30.72 -0.32 -30.71 0.35 -30.46 0.75 -30.07 0.99 -29.67 1.94 -26.19 2.05 -26.02 3.89 -25.93 4.11 -25.86 4.21 -25.97 4.23 -26.45 4.62 -26.84 5.4 -27 6.25 -27 6.47 -27.07 8.25 -27 9.02 -26.84 9.39 -26.5 9.43 -25.68 9.55 -25.51 11.32 -25.43 11.67 -25.34 12.14 -25.1 12.6 -24.71 12.99 -23.95 13.07 -23.39 13.08 -20.55 13.43 -20.25 13.83 -19.73 14.19 -19.92 14.82 -20.07 16.11 -19.86 16.96 -19.85 17.18 -19.79 18.1 -19.78 18.32 -19.72 20.32 -19.64 20.54 -19.57 20.82 -19.64 21.39 -19.64 21.81 -19.56 22.25 -19.36 22.82 -19.5 24.68 -19.43 25.29 -19.32 25.71 -19.1 26.26 -18.66 27.68 -18.57 35.17 -21.44 35.69 -21.77 36.19 -21.99 36.68 -22.07 37.31 -21.99 37.81 -21.84 38.5 -21.46 39.1 -20.85 39.56 -20.17 40.06 -19.17 40.42 -18.17 40.84 -16.45 41 -15.53 41.21 -13.25 41.21 -11.39 41.15 -11.1 41.14 -10.25 40.93 -8.47 40.56 -6.62 40.13 -5.12 39.56 -3.62 38.99 -2.48 38.6 -1.86 38.14 -1.25 37.24 -0.44 36.67 -0.16 36.17 -0.01 35.25 0 34.62 -0.23 33.88 -0.77 26.81 -4.63 25.32 -4.71 24.45 -4.23 24.04 -4.17 22.04 -4.29 21.32 -4.57 20.89 -4.43 20.04 -4.43 19.46 -4.57 17.47 -4.65 17.25 -4.71 15.25 -4.79 15.03 -4.85 14.18 -4.79 13.62 -4.87 13.11 -5.11 12.92 -4.33 12.7 -3.9 12.21 -3.4 11.74 -3.16 9.68 -2.5 9.71 -0.9 9.5 -0.47 9.24 -0.3 8.81 -0.16 4.74 1.06 4.04 1.21 3.82 1.15 2.9 1.14 2.68 1.07 1.82 1.07 1.6 1 0.75 1 0.53 0.93 -0.39 0.93 -0.61 0.86 -1.46 0.85 -1.68 0.79 -2.6 0.78 -2.82 0.72 -4.82 0.64 -5.04 0.57 -5.89 0.57 -6.11 0.5 -6.96 0.5 -7.18 0.43 -8.1 0.43 -8.32 0.36 -9.18 0.35 -9.4 0.29 -11.39 0.21 -12.02 0.06 -12.27 -0.12 -12.43 -0.47 -12.43 -1.68 -12.48 -1.77 -14.89 -1.93 -15.45 -2.08 -15.78 -2.25 -16.35 -2.83 -16.63 -3.48 -16.71 -4.04 -16.71 -22.18 -16.56 -23.02 -16.29 -23.54 -15.85 -23.96 -15.45 -24.2 -9.55 -25.94 -9.15 -26.11 -8.2 -29.31 -7.86 -29.82 -7.17 -30.27Z" fill="#9AA1A8"/><path fill-rule="evenodd" d="M9.43 -2.46 9.59 -2.48 9.71 -2.25 9.71 -0.9 9.5 -0.47 8.81 -0.16 4.1 1.21 -11.39 0.21 -12.21 -0.04 -12.43 -0.47 -12.43 -1.68 -12.32 -1.78 2.54 -0.79 3.75 -0.79Z" fill="url(#k3plate0CS)" stroke="url(#k3plate0CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M9.36 -2.39 9.59 -2.42 9.71 -2.25 9.71 -0.9 9.59 -0.66 4.95 0.77 4.61 0.71 4.57 -0.75 4.69 -0.99Z" fill="url(#k3plateF1CS)" stroke="url(#k3plateF1CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M-11.47 0.18 -10.89 0.18ZM-10.4 0.25 -9.82 0.25ZM-9.25 0.32 -8.67 0.32ZM-8.18 0.39 -7.6 0.39ZM-7.04 0.46 -6.46 0.46ZM-5.97 0.54 -5.39 0.54ZM-4.9 0.61 -4.32 0.61ZM-3.75 0.68 -3.17 0.68ZM-2.68 0.75 -2.1 0.75ZM-1.54 0.82 -0.96 0.82ZM-0.47 0.89 0.11 0.89ZM0.67 0.96 1.18 0.96ZM1.75 1.04 2.33 1.04ZM2.82 1.11 3.4 1.11Z" fill="url(#k3plateF2CS)" stroke="url(#k3plateF2CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M-12.27 -1.73 -11.97 -1.78 2.54 -0.79 4.02 -0.84 4.14 -0.68 4.14 0.6 3.95 0.84 3.25 0.85 -11.89 -0.15 -12.14 -0.25 -12.27 -0.48Z" fill="url(#k3plateF3CS)" stroke="url(#k3plateF3CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M-9.29 -26.04 -9.19 -26.05 -9.15 -25.96 -9.34 -24.91 -9.23 -24.73 -8.95 -24.66 -2.53 -24.22 -1.32 -24.21 -0.76 -24.3 1.52 -24.98 1.36 -24.68 1.37 -23.77 1.62 -23.66 2.32 -23.57 3.03 -23.57 4 -23.75 4.07 -23.9 4.07 -24.6 3.78 -24.96 3.39 -25.07 1.7 -25.01 2.06 -25.19 2.02 -25.95 2.11 -26 3.89 -25.93 4.16 -25.84 4.23 -25.19 4.32 -25.07 4.76 -24.87 5.25 -24.79 7.39 -24.71 8.82 -24.86 9.36 -25.11 9.47 -25.54 11.67 -25.34 12.14 -25.1 12.57 -24.75 12.92 -24.17 13.07 -23.46 13.06 -20.62 12.52 -20.84 12.03 -20.93 9.32 -21.07 8.69 -20.85 8 -20.32 7.3 -19.38 6.73 -18.24 6.23 -16.81 5.86 -15.25 5.57 -12.96 5.57 -10.47 5.8 -8.69 6.37 -6.69 7.11 -5.36 7.65 -4.82 8.33 -4.51 10.32 -4.36 11.53 -4.36 11.81 -4.44 12.35 -4.75 12.93 -5.25 13.07 -5.1 12.99 -4.55 12.7 -3.9 12.45 -3.58 11.79 -3.18 10.88 -2.87 3.82 -0.79 2.54 -0.79 -14.89 -1.93 -15.5 -2.11 -16.06 -2.48 -16.56 -3.26 -16.71 -4.11 -16.71 -22.18 -16.63 -22.81 -16.32 -23.5 -15.85 -23.96 -15.45 -24.2Z" fill="url(#k3body4CS)" stroke="url(#k3body4CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M12.64 -24.18 12.89 -24.07 13.07 -23.46 13.03 -20.6 12.52 -20.84 12.03 -20.93 9.26 -21.06 8.69 -20.85 8.15 -20.46 7.3 -19.38 6.58 -17.88 6.23 -16.81 5.87 -15.31 5.57 -13.03 5.57 -10.54 5.79 -8.75 6.16 -7.26 6.82 -5.79 7.11 -5.36 7.65 -4.82 8.4 -4.5 10.25 -4.36 11.53 -4.36 12.14 -4.61 12.89 -5.26 13.07 -5.1 12.92 -4.33 12.59 -4.01 5.05 -1.8 4.87 -1.98 4.71 -2.46 4.71 -21.04 4.8 -21.45 4.97 -21.78 5.26 -21.99Z" fill="url(#k3bodyF5CS)" stroke="url(#k3bodyF5CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M-9.29 -26.04 -9.19 -26.05 -9.15 -25.96 -9.34 -24.91 -9.23 -24.73 -8.95 -24.66 -2.53 -24.22 -1.32 -24.21 -0.76 -24.3 1.52 -24.98 1.36 -24.68 1.37 -23.77 1.62 -23.66 2.32 -23.57 3.03 -23.57 4 -23.75 4.07 -23.9 4.07 -24.6 3.78 -24.96 3.39 -25.07 1.7 -25.01 2.06 -25.19 2.02 -25.95 2.11 -26 3.89 -25.93 4.16 -25.84 4.23 -25.19 4.32 -25.07 4.76 -24.87 5.25 -24.79 7.39 -24.71 8.82 -24.86 9.36 -25.11 9.47 -25.54 11.32 -25.43 11.67 -25.34 11.84 -25.19 4.17 -22.87 2.4 -22.86 -15.17 -24.01 -15.43 -24.11 -15.45 -24.2Z" fill="url(#k3bodyF6CS)" stroke="url(#k3bodyF6CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M-15.25 -2.04 3.9 -0.82 2.54 -0.79 -13.96 -1.86Z" fill="url(#k3bodyF7CS)" stroke="url(#k3bodyF7CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M-15.5 -22.96 2.32 -21.85 2.86 -21.75 3.25 -21.43 3.5 -20.75 3.5 -2.61 3.35 -2.12 3.07 -1.82 2.61 -1.65 -15.03 -2.79 -15.52 -2.87 -15.96 -3.15 -16.21 -3.75 -16.21 -22.18 -16 -22.68Z" fill="url(#k3bodyF8CS)" stroke="url(#k3bodyF8CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M-4.71 -30.96 -0.32 -30.71 0.35 -30.46 0.75 -30.07 0.96 -29.71 1.2 -29.02 2.06 -25.81 2.06 -25.19 -0.76 -24.3 -1.25 -24.22 -3.68 -24.29 -8.03 -24.57 -9.23 -24.73 -9.35 -25.1 -9.13 -26.09 -8.2 -29.31 -7.89 -29.78 -7.17 -30.27Z" fill="url(#k3hump9CS)" stroke="url(#k3hump9CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M0.5 -29.61 0.93 -29.6 1.13 -29.24 2.06 -25.81 2.06 -25.19 -0.76 -24.3 -1.02 -24.3 -1.14 -24.54 -1.15 -25.18 -1.71 -28.47 -1.63 -28.88 -1.52 -28.99Z" fill="url(#k3humpF10CS)" stroke="url(#k3humpF10CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M-4.71 -30.96 -0.32 -30.71 0.04 -30.61 -2.68 -29.79 -7.1 -30.07 -7.33 -30.18 -7.17 -30.27Z" fill="url(#k3humpF11CS)" stroke="url(#k3humpF11CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M-7.71 -29.25 -5.47 -29.21 -2.86 -28.96 -2.51 -28.31 -1.87 -24.52 -1.97 -24.29 -2.53 -24.22 -8.93 -24.68 -9.07 -25.03 -8.92 -25.67 -8.06 -28.81Z" fill="url(#k3humpF12CS)" stroke="url(#k3humpF12CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M6.36 -27.04 8.25 -27 9.07 -26.82 9.42 -26.45 9.39 -25.15 8.88 -24.87 7.39 -24.71 5.25 -24.79 4.36 -25.04 4.22 -25.25 4.22 -26.39 4.29 -26.54 4.57 -26.82 4.91 -26.92Z" fill="url(#k3dial13CS)" stroke="url(#k3dial13CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M1.86 -25.04 3.39 -25.07 3.78 -24.96 4.06 -24.67 4.03 -23.79 3.74 -23.66 2.96 -23.57 2.32 -23.57 1.41 -23.73 1.37 -24.74 1.57 -24.96Z" fill="url(#k3button14CS)" stroke="url(#k3button14CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M9.21 -21.04 9.89 -21.07 12.52 -20.84 13.32 -20.36 13.77 -19.74 13.53 -19.5 12.05 -19.56 11.65 -19.39 11.04 -18.93 10.47 -18.14 10.01 -17.24 9.51 -15.81 9.22 -14.46 9 -12.6 9 -10.82 9.23 -9.05 9.66 -7.55 10.18 -6.5 10.86 -5.82 11.19 -5.66 11.68 -5.57 12.59 -5.56 12.84 -5.31 12.35 -4.75 11.53 -4.36 10.25 -4.36 8.4 -4.5 7.65 -4.82 7.11 -5.36 6.37 -6.69 6.01 -7.76 5.72 -9.18 5.57 -10.47 5.57 -13.03 5.86 -15.25 6.23 -16.81 6.73 -18.24 7.47 -19.64 8.15 -20.46 8.69 -20.85Z" fill="url(#k3mount15CS)" stroke="url(#k3mount15CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M12 -19.54 12.89 -19.57 13.54 -19.46 12.65 -18.38 11.87 -16.67 11.3 -14.38 11.07 -12.39 11.07 -10.68 11.3 -8.76 11.73 -7.19 12.15 -6.26 12.6 -5.64 12.53 -5.57 11.19 -5.66 10.57 -6.04 10.18 -6.5 9.8 -7.19 9.44 -8.19 9.22 -9.11 9 -10.82 9 -12.6 9.22 -14.46 9.51 -15.81 9.87 -16.88 10.44 -18.1 11.04 -18.93 11.65 -19.39Z" fill="url(#k3barrel116CS)" stroke="url(#k3barrel116CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M14.71 -20.04 15.54 -19.96 14.62 -19.77 14.43 -19.54 14.15 -19.46 13.99 -19.12 13.68 -19 13.53 -18.57 13.3 -18.45 13.18 -18 12.87 -17.74 12.82 -17.29 12.58 -17.02 12.49 -16.41 12.3 -16.17 12.27 -15.62 12.01 -15.17 12.04 -14.61 11.86 -14.18 11.85 -13.47 11.72 -13.1 11.78 -12.47 11.65 -12.03 11.77 -11.52 11.65 -11.03 11.78 -10.46 11.72 -9.9 11.85 -9.53 11.87 -8.83 12.04 -8.54 12.02 -7.98 12.27 -7.67 12.3 -7.19 12.48 -7.02 12.59 -6.48 12.84 -6.31 12.9 -5.93 13.16 -5.84 13.3 -5.41 13.59 -5.34 13.72 -5.11 14.02 -5.06 14.19 -4.87 14.59 -4.84 14.18 -4.79 13.41 -4.94 12.89 -5.29 12.18 -6.22 11.87 -6.83 11.44 -8.12 11.22 -9.25 11.07 -10.68 11.07 -12.39 11.44 -15.09 11.73 -16.24 12.11 -17.29 12.65 -18.38 13.07 -18.96 14 -19.82Z" fill="url(#k3focusBack17CS)" stroke="url(#k3focusBack17CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M15.01 -19.88 15.89 -19.93 20.41 -19.59 19.32 -18.64 18.87 -17.95 18.3 -16.74 17.66 -14.45 17.36 -12.1 17.43 -9.25 17.8 -7.33 18.08 -6.48 18.51 -5.62 18.93 -5.04 19.45 -4.58 14.19 -4.87 14.02 -5.06 13.72 -5.11 13.59 -5.34 13.34 -5.37 13.2 -5.81 12.9 -5.93 12.84 -6.31 12.59 -6.48 12.48 -7.02 12.3 -7.19 12.27 -7.67 12.02 -7.98 12.04 -8.54 11.86 -8.9 11.85 -9.53 11.72 -9.9 11.78 -10.46 11.64 -10.96 11.77 -11.48 11.65 -11.9 11.78 -12.47 11.72 -13.1 11.85 -13.47 11.87 -14.24 12.04 -14.61 12.01 -15.17 12.27 -15.62 12.3 -16.17 12.49 -16.41 12.58 -17.02 12.82 -17.29 12.87 -17.74 13.18 -18 13.3 -18.45 13.53 -18.57 13.68 -19 13.99 -19.12 14.15 -19.46 14.43 -19.54 14.62 -19.77 14.95 -19.8Z" fill="url(#k3knurl18CS)" stroke="url(#k3knurl18CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M20.71 -19.61 21.45 -19.63 21.81 -19.56 22.25 -19.32 21.81 -19.01 21.12 -18.92 20.65 -18.68 19.97 -18 19.65 -17.52 19.16 -16.52 18.73 -15.24 18.5 -14.32 18.22 -12.25 18.29 -9.32 18.51 -8.05 18.87 -6.91 19.47 -5.79 19.96 -5.29 20.33 -5.08 20.93 -4.96 21.26 -4.61 20.89 -4.43 19.97 -4.43 19.4 -4.65 18.93 -5.04 18.51 -5.62 18.08 -6.48 17.66 -7.91 17.43 -9.25 17.36 -12.1 17.5 -13.53 17.8 -15.09 18.51 -17.24 19.36 -18.68 19.93 -19.25Z" fill="url(#k3focusFront19CS)" stroke="url(#k3focusFront19CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M21.36 -18.96 21.68 -19 21.75 -18.93 21.25 -18.43 20.65 -17.52 19.94 -15.81 19.51 -14.02 19.29 -12.32 19.29 -9.68 19.44 -8.48 19.87 -6.76 20.3 -5.83 20.82 -5.07 20.68 -5 20 -5.25 19.5 -5.75 18.87 -6.91 18.51 -8.05 18.29 -9.32 18.22 -12.25 18.51 -14.38 19.18 -16.57 20 -18.04 20.65 -18.68Z" fill="url(#k3barrel220CS)" stroke="url(#k3barrel220CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M22.64 -19.46 23.6 -19.5 25.24 -19.34 25.71 -19.1 26.05 -18.81 25.96 -18.72 25.04 -18.78 24.62 -18.7 24.15 -18.46 23.47 -17.78 23.15 -17.31 22.51 -15.95 22.08 -14.52 21.79 -12.82 21.71 -12.11 21.72 -9.68 21.94 -8.12 22.44 -6.48 22.9 -5.65 23.5 -5.04 24.05 -4.8 25.19 -4.68 24.45 -4.23 24.04 -4.17 21.98 -4.3 21.29 -4.61 20.75 -5.15 20.3 -5.83 19.8 -6.98 19.44 -8.48 19.29 -9.68 19.36 -13.03 19.66 -14.74 20.01 -16.02 20.65 -17.52 21.25 -18.43 21.93 -19.1Z" fill="url(#k3aperture21CS)" stroke="url(#k3aperture21CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M24.93 -18.75 27.25 -18.64 27.54 -18.54 26.93 -18.18 26.4 -17.64 25.87 -16.81 25.51 -16.02 24.87 -13.81 24.57 -11.25 24.65 -9.18 25.08 -6.98 25.68 -5.65 26.15 -5.04 26.66 -4.7 26.6 -4.65 24.05 -4.8 23.55 -5.01 23.19 -5.3 22.65 -6.05 22.3 -6.83 21.94 -8.12 21.79 -9.04 21.71 -9.75 21.72 -12.18 21.94 -13.81 22.3 -15.31 22.68 -16.36 23.47 -17.78 24.15 -18.46 24.62 -18.7Z" fill="url(#k3barrel322CS)" stroke="url(#k3barrel322CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M36.5 -22.04 36.82 -22.07 37.59 -21.92 38.5 -21.46 39.1 -20.85 39.56 -20.17 40.06 -19.17 40.56 -17.67 41 -15.53 41.21 -13.32 41.21 -11.32 40.93 -8.47 40.49 -6.33 39.84 -4.33 38.99 -2.48 38.18 -1.29 37.28 -0.47 36.17 -0.01 35.25 0 34.62 -0.23 33.88 -0.77 26.98 -4.51 26.11 -5.07 25.68 -5.65 25.32 -6.36 24.94 -7.48 24.65 -9.18 24.57 -11.25 24.86 -13.75 25.3 -15.45 25.87 -16.81 26.4 -17.64 26.89 -18.14 27.62 -18.56 35.17 -21.44 36.19 -21.99ZM36.43 -21.11 37.03 -21.14 37.38 -21.06 38.07 -20.68 38.82 -19.85 39.49 -18.59 39.92 -17.38 40.35 -15.32 40.5 -14.03 40.57 -11.97 40.43 -9.75 39.99 -7.12 39.56 -5.55 38.92 -3.91 37.96 -2.29 37.39 -1.64 36.43 -1.04 35.68 -0.86 34.9 -1.08 34.29 -1.61 33.73 -2.4 33.16 -3.62 32.87 -4.48 32.43 -6.47 32.22 -8.61 32.22 -10.82 32.36 -12.46 32.66 -14.38 33.08 -16.09 33.66 -17.74 34.37 -19.17 34.9 -19.93 35.72 -20.75Z" fill="url(#k3hood23CS)" stroke="url(#k3hood23CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M36.43 -21.11 37.03 -21.14 37.38 -21.06 38.07 -20.68 38.82 -19.85 39.49 -18.59 39.92 -17.38 40.35 -15.32 40.5 -14.03 40.57 -11.97 40.43 -9.75 39.99 -7.12 39.56 -5.55 38.92 -3.91 37.96 -2.29 37.39 -1.64 36.43 -1.04 35.68 -0.86 35.05 -1.01 34.81 -1.18 35.45 -1.44 36 -1.82 36.68 -2.57 37.54 -4 38.34 -6.12 38.93 -8.75 39.21 -11.82 39.07 -14.82 38.56 -17.38 38.13 -18.59 37.53 -19.71 36.71 -20.6 36.1 -20.96Z" fill="url(#k3hoodInner24CS)" stroke="url(#k3hoodInner24CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M35.93 -20.89 36.17 -20.92 36.71 -20.6 37.53 -19.71 38.13 -18.59 38.56 -17.38 38.85 -16.18 39.14 -14.18 39.21 -12.82 39.14 -10.54 38.7 -7.55 38.34 -6.12 37.54 -4 37.1 -3.22 36.36 -2.18 35.45 -1.44 34.75 -1.22 34.29 -1.61 34.17 -1.82 34.95 -1.87 35.75 -2.29 36.53 -3.07 36.99 -3.76 37.63 -5.05 38.42 -7.55 38.71 -9.18 38.93 -11.47 38.93 -13.03 38.78 -14.75 38.27 -17.17 37.49 -18.95 37.07 -19.54 36.38 -20.13 35.88 -20.34 35.39 -20.4Z" fill="url(#k3retain25CS)" stroke="url(#k3retain25CS)" stroke-width="0.12" stroke-linejoin="round"/><path fill-rule="evenodd" d="M35.29 -20.32 35.88 -20.34 36.64 -19.96 37.32 -19.21 37.99 -17.95 38.42 -16.67 38.71 -15.25 38.93 -13.03 38.93 -11.47 38.71 -9.18 38.42 -7.55 37.61 -5 36.99 -3.76 36.5 -3.04 35.5 -2.11 34.95 -1.87 34.46 -1.79 34.04 -1.93 33.37 -3.12 32.87 -4.48 32.58 -5.62 32.22 -8.61 32.22 -10.82 32.5 -13.53 33.08 -16.09 33.66 -17.74 34.37 -19.17 34.9 -19.93Z" fill="url(#k3glass26CS)" stroke="url(#k3glass26CS)" stroke-width="0.12" stroke-linejoin="round"/><path d="M14.86 -19.55L20.53 -19.19M14.43 -19.35L20.09 -18.98M14 -19.01L19.67 -18.64M13.6 -18.53L19.26 -18.16M13.21 -17.93L18.88 -17.56M12.87 -17.21L18.53 -16.84M12.56 -16.4L18.22 -16.03M12.3 -15.5L17.96 -15.14M12.09 -14.55L17.75 -14.18M11.94 -13.54L17.6 -13.18M11.84 -12.52L17.51 -12.15M11.81 -11.49L17.48 -11.13M11.84 -10.49L17.51 -10.12M11.94 -9.52L17.6 -9.15M12.09 -8.61L17.75 -8.24M12.3 -7.77L17.96 -7.4M12.56 -7.03L18.22 -6.67M12.87 -6.4L18.53 -6.04M13.21 -5.9L18.88 -5.53M13.6 -5.52L19.26 -5.15M14 -5.29L19.67 -4.92" clip-path="url(#k3clipKnurlCS)" stroke="#4A5057" stroke-opacity="0.55" stroke-width="0.2" fill="none"/><g id="flashS" opacity="0"><circle cx="40.33" cy="-10.75" r="18" fill="url(#kFlashCS)"/></g></g></g></g></g></g></svg></div>
+<script>(function () {
+  // HERON live logo: the light follows the pointer, the arm reaches for it (spring-driven joints), the camera head
+  // looks around, follows the pointer and takes a picture on click. The percent-sign placeholders are filled by
+  // final_build.py.
+  var svg = document.getElementById("heronSvg");
+  var stage = document.getElementById("heronStage");
+  if (!svg || !stage) return;
+  var ld = document.getElementById("ldS"), ls = document.getElementById("lsS");
+  var dif = ld.parentNode, spe = ls.parentNode;
+  var off = document.getElementById("soffS"), offc = document.getElementById("soffcS");
+  var head = document.getElementById("camHeadS"), flash = document.getElementById("flashS");
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var MINX = -20, MAXX = 717, MINY = -145.7, MAXY = 125, CXL = 348.5, CYL = -2.85, PX = 148.67, PY = -74.74;
+  // the arm at rest (logo units): shoulder S on top of the H, elbow E, wrist W; the camera pivot (PX, PY) is on the post
+  var SX = 106.25, SY = 6, EX = 95.85, EY = -42.91, WX = 148.67, WY = -54.13, SWING = 35;
+  var tx = -30, ty = -125.7, cx = tx, cy = ty, last = -1e9, raf = 0, visible = true, lastIdle = 0, lastT = -1;
+  var pvx = 0, pvy = 0, over = false, wake = 0, firstStep = true;
+  // the opening: the arm waits folded (for the 3D head, at most until armLatest), gathers, rises, then the camera
+  // looks around and takes the first picture
+  var DUR = 1400, armStart = reduce ? -1 : performance.now() + 500, armLatest = armStart + 1500;
+  var introStart = armStart + DUR + 200, introDone = reduce, flashStart = -1e9, flashedIntro = reduce;
+  var pan = 0, tilt = 0, panT = 0, tiltT = 0, headBusy = false;
+  // the WebGL camera head (heron-cam3d.js) once it is ready; until then, or without WebGL, the SVG head is drawn
+  var cam3d = null, cam3dWait = !reduce;
+  document.addEventListener("heron-cam3d", function (e) {
+    if (!e.detail || e.detail.svg !== svg) return;
+    cam3dWait = false;
+    if (!e.detail.failed) { cam3d = e.detail; apply(0); }
+    kick();
+  });
+  function ease(x) { return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function lerp(a, b, k) { return a + (b - a) * ease(clamp(k, 0, 1)); }
+  // smoothing per second, not per frame, so 60, 120 and 144 Hz screens all look the same
+  function smooth(dt, tau) { return 1 - Math.exp(-dt / tau); }
+
+  // ---- the arm: three joints, each a servo-like damped spring toward a target angle ----
+  // Angles are degrees in the SVG sense (clockwise on screen is positive), relative to the rest pose. Each target
+  // eases in over tau (no instant jolt) and the spring lands with one soft overshoot (z about 0.7). The elbow is
+  // stiffer than the shoulder, so the forearm leads and the upper arm follows. The wrist is a levelling servo (it
+  // tracks the arm's own velocity) and the gimbal keeps the camera level (tiltW), so the head never bobs on its post.
+  // k: stiffness (1/s^2), z: damping ratio, tau: target easing (s), o: the shutter-press layer (degrees).
+  var J = {
+    s: { a: reduce ? 0 : SWING, v: 0, k: 46, z: 0.7, tau: 0.06, c: SX + " " + SY, g: svg.querySelectorAll('[data-joint="shoulder"]') },
+    e: { a: reduce ? 0 : -SWING, v: 0, k: 72, z: 0.68, tau: 0.05, c: EX + " " + EY, g: svg.querySelectorAll('[data-joint="elbow"]') },
+    w: { a: 0, v: 0, k: 160, z: 0.6, c: WX + " " + WY, g: svg.querySelectorAll('[data-joint="wrist"]') }
+  };
+  var ARM = { force: null, J: J };          // tests: ARM.force = [shoulder, elbow, wrist] pins the joints (degrees)
+  window.HeronArm = window.HeronArm || {};
+  window.HeronArm["S"] = ARM;
+  function springTo(j, target, dt, tv) {
+    if (j.tau) { if (j.tg == null) j.tg = target; j.tg += (target - j.tg) * smooth(dt, j.tau); target = j.tg; }
+    var w = Math.sqrt(j.k);
+    j.v += (j.k * (target - j.a) - 2 * j.z * w * (j.v - (tv || 0))) * dt;
+    j.a += j.v * dt;
+  }
+  function setJoints() {
+    for (var n in J) {
+      var j = J[n], tr = "rotate(" + (j.a + (j.o || 0)).toFixed(3) + " " + j.c + ")";
+      for (var i = 0; i < j.g.length; i++) j.g[i].setAttribute("transform", tr);
+    }
+  }
+  function rot(p, ox, oy, deg) {
+    var r = deg * Math.PI / 180, c = Math.cos(r), s = Math.sin(r), x = p[0] - ox, y = p[1] - oy;
+    return [ox + x * c - y * s, oy + x * s + y * c];
+  }
+  // where the camera pivot is now: forward kinematics in the order the groups nest (wrist inside elbow inside shoulder)
+  function pivot() { return rot(rot(rot([PX, PY], WX, WY, J.w.a), EX, EY, J.e.a), SX, SY, J.s.a); }
+
+  // ---- reaching: two-link inverse kinematics ----
+  // The arm steers the camera pivot toward a point: toward the pointer while you move it (leaning a little further
+  // along a fast move, then settling), otherwise where the camera looks. The point stays inside BOX (logo units
+  // around the rest pivot), so the arm never touches the letters or leaves the logo. Shoulder and elbow angles are
+  // solved from it with the elbow on the same side as at rest; the wrist keeps the post upright.
+  var REACH = { x: 40, up: 26, down: 26 }, BOX = { l: -46, r: 50, u: -28, d: 28 };
+  var L1 = Math.hypot(EX - SX, EY - SY), L2 = Math.hypot(WX - EX, WY - EY), POSTY = WY - PY;  // the post: wrist to pivot
+  var U0 = Math.atan2(EY - SY, EX - SX), F0 = Math.atan2(WY - EY, WX - EX), DEG = 180 / Math.PI;
+  function wrap180(a) { return a - 360 * Math.round(a / 360); }
+  function solve(px, py) {
+    var wx = px - SX, wy = py + POSTY - SY;                                  // the wrist under the pivot target
+    var d = Math.hypot(wx, wy), phi = Math.atan2(wy, wx);
+    d = clamp(d, Math.abs(L1 - L2) + 1, 0.93 * (L1 + L2));                   // in reach, and never locked straight
+    var al = Math.acos(clamp((L1 * L1 + d * d - L2 * L2) / (2 * L1 * d), -1, 1));
+    var u = phi - al;                                                        // upper arm direction (elbow up and back)
+    var ex = L1 * Math.cos(u), ey = L1 * Math.sin(u);
+    var fw = Math.atan2(d * Math.sin(phi) - ey, d * Math.cos(phi) - ex);    // forearm direction
+    var as = wrap180((u - U0) * DEG);
+    return [as, wrap180((fw - F0) * DEG - as)];
+  }
+  function pivotTarget(t, active, idle, quiet) {
+    var look = (1 - Math.cos(pan)) / 2;                                      // 0 facing right (rest), 1 facing left
+    var ox = -16 * look, oy = -6 * look + 0.45 * tilt;                       // with no pointer: go where the camera looks
+    if (active) {
+      ox = REACH.x * Math.tanh((tx - PX) / 170);                             // toward the pointer, easing off far away
+      var vy = (ty - (PY - 13.5)) / 70;
+      oy = (vy < 0 ? REACH.up : REACH.down) * Math.tanh(vy);
+      ox += 12 * Math.tanh(pvx / 500); oy += 8 * Math.tanh(pvy / 500);      // lean along with a moving pointer
+    }
+    if (idle && quiet < 1) {                                                 // breathing: never a metronome
+      var a = t / 1000, k = 1 - quiet;
+      ox += k * (1.6 * Math.sin(a * 0.93) + 0.6 * Math.sin(a * 2.31 + 0.6));
+      oy += k * (2.0 * Math.sin(a * 0.93 + 1.3) + 0.7 * Math.sin(a * 1.71 + 2.1));
+    }
+    return [PX + clamp(ox, BOX.l, BOX.r), PY + clamp(oy, BOX.u, BOX.d)];
+  }
+  // the opening's rise: smootherstep to 1.1 of the way, then a soft settle back (one designed landing overshoot)
+  function riseCurve(x) {
+    if (x < 0.62) { x /= 0.62; return 1.1 * x * x * x * (x * (6 * x - 15) + 10); }
+    x = (x - 0.62) / 0.38; return 1.1 - 0.1 * x * x * (3 - 2 * x);
+  }
+  // where the arm wants to be: folded, a 180 ms gather, the rise (the forearm unfolds 80 ms after the upper arm), reaching
+  function armTargets(t, active, idle, quiet) {
+    if (reduce) return [0, 0];
+    if (t < armStart) return [SWING, -SWING];
+    var ta = t - armStart, ru = 1, re = 1;
+    if (ta < 180) { var q0 = 0.5 - 0.5 * Math.cos(Math.PI * ta / 180); return [SWING + 6 * q0, -SWING - 7 * q0]; }
+    if (ta < 980) { ru = riseCurve((ta - 180) / 800); re = riseCurve(clamp((ta - 260) / 720, 0, 1)); }
+    var p = pivotTarget(t, active, idle, quiet), r = solve(p[0], p[1]), ts = r[0], te = r[1];
+    if (ru !== 1) ts = (SWING + 6) * (1 - ru) + ts * ru;
+    if (re !== 1) te = (-SWING - 7) * (1 - re) + te * re;
+    return [ts, te];
+  }
+  // the shutter press, a keyframed layer on top of the springs (0..1): a quick dip (70 ms, ease-out), a beat of
+  // hold, then a soft release with one small rebound, all settled by 560 ms
+  function press(ms) {
+    if (!(ms >= 0 && ms < 560)) return 0;
+    if (ms < 70) { var u = 1 - ms / 70; return 1 - u * u * u; }
+    if (ms < 120) return 1;
+    var r = (ms - 120) / 440;
+    return Math.exp(-5.4 * r) * (Math.cos(7.2 * r) + 0.75 * Math.sin(7.2 * r));
+  }
+  function armStep(t, dt, active, idle, quiet) {
+    if (ARM.force) {
+      J.s.a = ARM.force[0]; J.e.a = ARM.force[1]; J.w.a = ARM.force[2]; J.s.v = J.e.v = J.w.v = 0;
+      J.s.o = J.e.o = J.w.o = 0; J.s.tg = J.e.tg = null;
+      setJoints();
+      return false;
+    }
+    var tg = armTargets(t, active, idle, quiet), P = reduce ? 0 : press(t - flashStart), pd = Math.cos(pan) < 0 ? -1 : 1;
+    J.e.o = 4.5 * P; J.s.o = 1.2 * pd * P; J.w.o = -(J.e.o + J.s.o);       // the post stays upright through the dip
+    springTo(J.s, tg[0], dt);
+    springTo(J.e, tg[1], dt);
+    springTo(J.w, -(J.s.a + J.e.a), dt, -(J.s.v + J.e.v));                 // levelling servo: the post stays upright
+    setJoints();
+    return P !== 0 || Math.abs(J.s.v) + Math.abs(J.e.v) + Math.abs(J.w.v) > 0.05 ||
+      Math.abs(tg[0] - J.s.a) + Math.abs(tg[1] - J.e.a) + Math.abs(J.s.a + J.e.a + J.w.a) > 0.02;
+  }
+  setJoints();
+
+  // ---- the camera head ----
+  // the opening look-around while it finds its angle: [end time ms, pan, tilt]
+  var KEYS = [[0, 0, 0], [450, 0, 16], [1000, Math.PI, -8], [1350, Math.PI, -8], [1900, 0, 0], [2150, 0, 7], [2400, 0, 0]];
+  function introPose(ms) {
+    for (var i = 1; i < KEYS.length; i++) {
+      if (ms <= KEYS[i][0]) {
+        var a = KEYS[i - 1], b = KEYS[i], k = (ms - a[0]) / (b[0] - a[0]);
+        return [lerp(a[1], b[1], k), lerp(a[2], b[2], k)];
+      }
+    }
+    return [0, 0];
+  }
+  // idle: now and then the camera glances somewhere, as if looking for the next shot, and the arm goes with it; the
+  // first one 3.4 s after the pointer goes quiet, then on an irregular rhythm. After DOZE ms of quiet the logo
+  // settles and sleeps (no frames at all) until someone points at it again. [pan, tilt, hold ms, quiet ms after]
+  var GLANCES = [[Math.PI, -10, 1700, 7400], [0, 15, 1300, 10600], [Math.PI, 7, 2100, 8800], [0, -11, 1200, 11800], [Math.PI, -4, 1500, 9300]];
+  var idleSince = -1, GCYC = 0, DOZE = 40000;
+  for (var gi = 0; gi < GLANCES.length; gi++) GCYC += GLANCES[gi][2] + GLANCES[gi][3];
+  function glance(t) {
+    if (idleSince < 0) idleSince = t;
+    var e = t - idleSince - 3400;
+    if (e < 0 || t - idleSince > DOZE) return null;
+    e %= GCYC;
+    for (var i = 0; i < GLANCES.length; i++) { var g = GLANCES[i]; if (e < 0) return null; if (e < g[2]) return g; e -= g[2] + g[3]; }
+    return null;
+  }
+  // the gimbal keeps the camera level: its tilt takes out the post's roll (exact while facing left or right)
+  function tiltW() { return tilt - (J.s.a + J.e.a + J.w.a) * Math.cos(pan); }
+  function setHead() {
+    // SVG head (no WebGL): it faces right or left (mirrored) and fades through the turn, never squashed flat
+    var c = Math.cos(pan), s = c < 0 ? -1 : 1;
+    head.setAttribute("transform", "translate(" + PX + " " + PY + ") scale(" + s + " 1) rotate(" + tiltW().toFixed(2) + ")");
+    head.setAttribute("opacity", Math.min(1, Math.abs(c) / 0.45).toFixed(3));
+  }
+  function lensWorld() {
+    if (cam3d) return cam3d.lens(pan, tiltW());
+    // the SVG head's lens in logo units, through the arm's joints and the head's own turn
+    var m = svg.getScreenCTM(), h = head.getScreenCTM();
+    if (!m || !h) return [PX, PY];
+    var pt = svg.createSVGPoint(); pt.x = 40.33; pt.y = -10.75;
+    var q = pt.matrixTransform(m.inverse().multiply(h));
+    return [q.x, q.y];
+  }
+  function apply(fo) {
+    ld.setAttribute("x", cx.toFixed(1)); ld.setAttribute("y", cy.toFixed(1));
+    ls.setAttribute("x", cx.toFixed(1)); ls.setAttribute("y", cy.toFixed(1));
+    dif.setAttribute("diffuseConstant", (1.25 + 0.9 * fo).toFixed(3));
+    spe.setAttribute("specularConstant", (1.05 + 0.9 * fo).toFixed(3));
+    // the cast shadow falls away from the light: light upper right -> shadow lower left
+    var dx = clamp((CXL - cx) / (MAXX - MINX) * 30, -15, 15);
+    var dy = clamp(5 + (CYL - cy) / (MAXY - MINY) * 20, -3, 15);
+    off.setAttribute("dx", dx.toFixed(2)); off.setAttribute("dy", dy.toFixed(2));
+    offc.setAttribute("dx", dx.toFixed(2)); offc.setAttribute("dy", dy.toFixed(2));
+    var m = svg.getScreenCTM(), rc = stage.getBoundingClientRect(), lxs = null, lys = null;
+    if (m && rc.width) {
+      var pt = svg.createSVGPoint(); pt.x = cx; pt.y = cy;
+      var q = pt.matrixTransform(m);
+      lxs = ((q.x - rc.left) / rc.width * 100).toFixed(2) + "%";
+      lys = ((q.y - rc.top) / rc.height * 100).toFixed(2) + "%";
+    }
+    // the 3D head gets pose, light, flash and the shadow offset (it reads the post's position and roll from the
+    // joints itself); it returns false if WebGL went away
+    if (!(cam3d && cam3d.frame(pan, tiltW(), cx, cy, fo, dx, dy))) { cam3d = null; setHead(); }
+    // style writes last, after this frame's layout reads
+    flash.setAttribute("opacity", fo.toFixed(3));
+    stage.style.setProperty("--flash", (fo * 0.22).toFixed(3));
+    if (lxs) { stage.style.setProperty("--lx", lxs); stage.style.setProperty("--ly", lys); }
+  }
+  function toUser(e) {
+    var m = svg.getScreenCTM();
+    if (!m) return null;
+    var pt = svg.createSVGPoint();
+    pt.x = e.clientX; pt.y = e.clientY;
+    return pt.matrixTransform(m.inverse());
+  }
+  function onMove(e) {
+    var q = toUser(e);
+    if (!q) return;
+    // the pointer's velocity (logo units/s, smoothed): the arm leans along with a moving pointer, settles when it stops
+    var now = performance.now(), nx = clamp(q.x, MINX, MAXX), ny = clamp(q.y, MINY, MAXY), dm = (now - last) / 1000;
+    if (dm > 0.004 && dm < 0.25) { pvx += ((nx - tx) / dm - pvx) * 0.4; pvy += ((ny - ty) / dm - pvy) * 0.4; }
+    tx = nx; ty = ny; last = now;
+    kick();
+  }
+  function shoot() {
+    var now = performance.now();
+    if (now - flashStart < 450) return;                                     // the flash recharges: no stacking, no flicker
+    flashStart = now;
+    kick();                                                                 // the arm's dip is press() in armStep
+  }
+  function kick() { if (!raf && visible) raf = requestAnimationFrame(step); }
+  // the opening's clock runs only while the logo can be seen and frames are drawn: a hidden tab, an off-screen hero
+  // or a long stall moves it on, so a visitor always gets the whole opening, never a flash on a still-folded arm
+  function shift(d, at) {
+    if (!introDone && !reduce) { armStart += d; armLatest += d; introStart += d; }
+    if (idleSince >= 0) idleSince += d;
+    if (flashStart > at - 560) flashStart += d;                             // only a flash (and press) still running
+  }
+  function step(t) {
+    raf = 0;
+    if (firstStep) { firstStep = false; if (!introDone && !reduce && t > armStart - 300) shift(t - (armStart - 500), t); }
+    else if (lastT >= 0 && t - lastT > 100) shift(t - lastT - 17, lastT);
+    var active = over || t - last < 2600;
+    var idle = !reduce && !active;
+    var quiet = idle && idleSince >= 0 ? clamp((t - idleSince - DOZE) / 3000, 0, 1) : 0;   // dozing off: 0 -> 1
+    var busy = Math.abs(J.s.v) + Math.abs(J.e.v) + Math.abs(J.w.v) > 15 || headBusy;
+    if (idle && introDone && !busy && t - lastIdle < 33 && t - flashStart > 600) { kick(); return; }
+    lastIdle = t;
+    var dt = lastT < 0 ? 1 / 60 : clamp((t - lastT) / 1000, 0, 0.05);
+    lastT = t;
+    var kv = Math.exp(-dt / 0.14); pvx *= kv; pvy *= kv;                     // the pointer's velocity fades once it stops
+    if (idle && quiet === 0) {                                               // the light wanders while nobody points
+      var a = t / 1000;
+      tx = (MINX + MAXX) / 2 + Math.cos(a * 0.42) * (MAXX - MINX) * 0.42;
+      ty = MINY + (MAXY - MINY) * 0.32 + Math.sin(a * 0.7) * (MAXY - MINY) * 0.28;
+    }
+    var kl = smooth(dt, idle ? 0.5 : 0.11);
+    cx += (tx - cx) * kl;
+    cy += (ty - cy) * kl;
+    // the opening waits, folded, for the 3D head (its set-up would stall the rise), at most until armLatest
+    if (cam3dWait && !introDone) {
+      if (t >= armLatest) cam3dWait = false;
+      else if (t >= armStart - 60) { armStart = t + 60; introStart = armStart + DUR + 200; }
+    }
+    // the camera head: scripted look-around first, then it turns toward the pointer (or glances around when idle)
+    if (!introDone && t >= introStart) {
+      var ip = introPose(t - introStart);
+      pan = ip[0]; tilt = ip[1]; panT = pan; tiltT = tilt;
+      if (!flashedIntro && t - introStart > 2450) { flashedIntro = true; flashStart = t; }
+      if (t - introStart > 2500) { introDone = true; idleSince = -1; }
+    } else if (!introDone) {
+      panT = 0; tiltT = 0;                                                   // before the look-around (and on replay): face front
+      pan += (panT - pan) * smooth(dt, 0.13); tilt += (tiltT - tilt) * smooth(dt, 0.11);
+    } else {
+      panT = 0; tiltT = 0;
+      if (active) {
+        idleSince = -1;
+        var p = pivot(), ddx = tx - p[0], ddy = ty - (p[1] - 13.5);
+        // which way to face is decided from the rest pivot, with a little hysteresis, so the arm's own reach can
+        // never flip it back and forth
+        panT = (pan > Math.PI / 2 ? tx - PX < 6 : tx - PX < -6) ? Math.PI : 0;
+        tiltT = clamp(Math.atan2(ddy, Math.max(Math.abs(ddx), 8)) * 180 / Math.PI, -35, 35);
+      } else if (!reduce) {
+        var g = glance(t);
+        if (g) { panT = g[0]; tiltT = g[1]; }
+      }
+      pan += (panT - pan) * smooth(dt, 0.158);
+      tilt += (tiltT - tilt) * smooth(dt, 0.11);
+    }
+    headBusy = Math.abs(panT - pan) > 0.003 || Math.abs(tiltT - tilt) > 0.05;
+    var moving = armStep(t, dt, active, idle, quiet);
+    // shutter flash: a burst at the lens that briefly lights the letters from the camera
+    var fk = (t - flashStart) / 420, fo = 0;
+    if (fk >= 0 && fk <= 1) {
+      fo = fk < 0.12 ? fk / 0.12 : 1 - (fk - 0.12) / 0.88;
+      var lw = lensWorld();
+      cx = lw[0]; cy = lw[1];
+    }
+    apply(fo);
+    var light = Math.abs(tx - cx) > 0.4 || Math.abs(ty - cy) > 0.4;
+    if (idle && quiet < 1 || moving || headBusy || light || !introDone || t < armStart + 400 || fk <= 1) kick();
+    else if (!over && t - last < 2600) {                                     // wake up when the pointer's window ends
+      clearTimeout(wake);
+      wake = setTimeout(kick, Math.max(0, last + 2600 - performance.now()) + 30);
+    }
+  }
+  stage.addEventListener("pointermove", onMove);
+  stage.addEventListener("pointerdown", onMove);
+  stage.addEventListener("click", shoot);
+  // a mouse resting on the logo keeps it attentive (no idle glances under it); leaving starts the quiet countdown
+  stage.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") { over = true; kick(); } });
+  stage.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") { over = false; last = performance.now(); kick(); } });
+  window.addEventListener("resize", function () { apply(0); });
+  var pausedAt = -1;
+  function sync() {
+    var now = performance.now();
+    if (!visible || document.hidden) { if (pausedAt < 0) pausedAt = now; return; }
+    if (pausedAt >= 0) { shift(now - pausedAt, pausedAt); pausedAt = -1; }
+    lastT = -1; kick();
+  }
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) { visible = es[es.length - 1].isIntersecting; sync(); }).observe(stage);
+  }
+  document.addEventListener("visibilitychange", sync);
+  if (document.hidden) sync();
+  var replay = document.getElementById("");
+  if (replay) replay.addEventListener("click", function () {
+    if (reduce) return;
+    armStart = performance.now() + 700; armLatest = armStart;              // the arm folds down first, then rises again
+    introStart = armStart + DUR + 200; introDone = false; flashedIntro = false;
+    idleSince = -1; firstStep = false;
+    kick();
+  });
+  apply(0); kick();
+})();
+</script>
+<script type="module">
+/* HERON hero: the camera head as a small real-time 3D model (three@0.160.0, the only network request).
+   The flat SVG head stays in the markup as the fallback; when WebGL is ready this module lays a transparent
+   canvas exactly over the head's pivot, hides the SVG head and draws the model whenever the page script
+   (LIVE_JS) reports a new pan / tilt / light / flash. It never runs its own animation loop.
+   Units are logo units (cap height = 100). Model space: +x = lens direction, +y = up, origin = tilt pivot
+   (top of the gimbal motor). */
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js";
+
+const DEG = Math.PI / 180;
+// The logo is drawn flat, so the camera is seen almost from the side: turned YAW0 toward the viewer (the hood
+// mouth reads as an ellipse, as in the drawing) and seen ELEV from above (a sliver of the top shows).
+const YAW0 = 25 * DEG, ELEV = 8 * DEG;
+const EXT = { l: 56, r: 56, u: 54, d: 34 };      // canvas reach around the pivot (logo units)
+const LENS_Y = 13.5;                             // lens axis height above the pivot (drawing: y = -13.5)
+const LENS_TIP = [44.5, LENS_Y, 0];              // flash burst centre, model space (just in front of the hood mouth)
+const KNURL = { r0: 7.22, amp: 0.34, x0: 16.3, x1: 22.75, n: 44 };   // focus ring grip
+const LIGHT_Z = 190;                             // height of the key light above the logo plane (letters: 150..210)
+
+/* ---------- geometry helpers ---------- */
+// rounded block; "pillow" bends the shading normals of the flat panels a little (as if slightly domed),
+// so a flat face shows a soft gradient instead of one flat reflection
+function roundedBox(w, h, d, r, seg, pillow) {
+  const mid = 6, n = 2 * seg + mid, k = pillow || 0;
+  const g = new THREE.BoxGeometry(w, h, d, n, n, n);
+  const pos = g.attributes.position, nor = g.attributes.normal;
+  const H = [w / 2, h / 2, d / 2];
+  const remap = (v, hf) => {
+    const i = Math.round((v / hf + 1) / 2 * n);
+    if (i <= seg) return -hf + r * i / seg;
+    if (i >= n - seg) return hf - r * (n - i) / seg;
+    return -(hf - r) + (i - seg) / mid * 2 * (hf - r);
+  };
+  const p = [0, 0, 0], c = [0, 0, 0];
+  for (let q = 0; q < pos.count; q++) {
+    p[0] = remap(pos.getX(q), H[0]); p[1] = remap(pos.getY(q), H[1]); p[2] = remap(pos.getZ(q), H[2]);
+    for (let a = 0; a < 3; a++) c[a] = Math.max(-(H[a] - r), Math.min(H[a] - r, p[a]));
+    let nx = p[0] - c[0], ny = p[1] - c[1], nz = p[2] - c[2];
+    let L = Math.hypot(nx, ny, nz) || 1; nx /= L; ny /= L; nz /= L;
+    pos.setXYZ(q, c[0] + nx * r, c[1] + ny * r, c[2] + nz * r);
+    if (k) {
+      nx += k * c[0] / Math.max(1e-6, H[0] - r); ny += k * c[1] / Math.max(1e-6, H[1] - r); nz += k * c[2] / Math.max(1e-6, H[2] - r);
+      L = Math.hypot(nx, ny, nz); nx /= L; ny /= L; nz /= L;
+    }
+    nor.setXYZ(q, nx, ny, nz);
+  }
+  return g;
+}
+
+// surface of revolution about +x from a profile [[radius, x], ...]; a repeated point makes a sharp crease
+function lathe(profile, segs, colors) {
+  const m = profile.length, pos = [], nor = [], uv = [], col = [], idx = [];
+  const segN = (a, b) => { const dr = b[0] - a[0], dx = b[1] - a[1], L = Math.hypot(dr, dx); return L < 1e-9 ? null : [dx / L, -dr / L]; };
+  const n2 = [], len = [0];
+  for (let j = 0; j < m; j++) {
+    const p = j > 0 ? segN(profile[j - 1], profile[j]) : null, q = j < m - 1 ? segN(profile[j], profile[j + 1]) : null;
+    const v = p && q ? [p[0] + q[0], p[1] + q[1]] : (p || q || [1, 0]), L = Math.hypot(v[0], v[1]) || 1;
+    n2.push([v[0] / L, v[1] / L]);
+    if (j) len.push(len[j - 1] + Math.hypot(profile[j][0] - profile[j - 1][0], profile[j][1] - profile[j - 1][1]));
+  }
+  for (let i = 0; i <= segs; i++) {
+    const f = i / segs * Math.PI * 2, cs = Math.cos(f), sn = Math.sin(f);
+    for (let j = 0; j < m; j++) {
+      const [r, x] = profile[j];
+      pos.push(x, r * cs, r * sn);
+      nor.push(n2[j][1], n2[j][0] * cs, n2[j][0] * sn);
+      uv.push(i / segs, len[j] / (len[m - 1] || 1));
+      if (colors) col.push(...colors[j]);
+    }
+  }
+  for (let i = 0; i < segs; i++) for (let j = 0; j < m - 1; j++) {
+    if (profile[j][0] === profile[j + 1][0] && profile[j][1] === profile[j + 1][1]) continue;
+    const a = i * m + j, b = (i + 1) * m + j, c = (i + 1) * m + j + 1, d = i * m + j + 1;
+    idx.push(a, b, d, b, c, d);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute("normal", new THREE.Float32BufferAttribute(nor, 3));
+  g.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
+  if (colors) g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+  g.setIndex(idx);
+  return g;
+}
+
+// focus ring grip: a band of fine longitudinal ridges
+function knurl(r0, amp, x0, x1, ridges) {
+  const S = ridges * 4, pos = [], nor = [], uv = [], idx = [];
+  for (let i = 0; i <= S; i++) {
+    const f = i / S * Math.PI * 2, cs = Math.cos(f), sn = Math.sin(f);
+    const r = r0 + amp * (0.5 - 0.5 * Math.cos(ridges * f)), dr = amp * 0.5 * ridges * Math.sin(ridges * f);
+    let ny = r * cs + dr * sn, nz = r * sn - dr * cs;
+    const L = Math.hypot(ny, nz); ny /= L; nz /= L;
+    for (const x of [x0, x1]) { pos.push(x, r * cs, r * sn); nor.push(0, ny, nz); uv.push(i / S, x === x0 ? 0 : 1); }
+  }
+  for (let i = 0; i < S; i++) { const a = i * 2, b = a + 2, c = a + 3, d = a + 1; idx.push(a, b, d, b, c, d); }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute("normal", new THREE.Float32BufferAttribute(nor, 3));
+  g.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  return g;
+}
+
+// the viewfinder hump: a rounded block that narrows toward the top (like the trapezoid in the drawing)
+function hump(w, h, d, r, topX, topZ, pillow) {
+  const g = roundedBox(w, h, d, r, 3, pillow), pos = g.attributes.position, nor = g.attributes.normal;
+  for (let k = 0; k < pos.count; k++) {
+    const x = pos.getX(k), y = pos.getY(k), z = pos.getZ(k), u = (y + h / 2) / h;
+    const s = 1 - (1 - topX) * u, t = 1 - (1 - topZ) * u, ds = -(1 - topX) / h, dt = -(1 - topZ) / h;
+    const nx = nor.getX(k), ny = nor.getY(k), nz = nor.getZ(k);
+    let mx = nx / s, my = ny - x * ds * nx / s - z * dt * nz / t, mz = nz / t;
+    const L = Math.hypot(mx, my, mz); mx /= L; my /= L; mz /= L;
+    pos.setXYZ(k, x * s, y, z * t); nor.setXYZ(k, mx, my, mz);
+  }
+  return g;
+}
+
+function brushTexture() {
+  // fine horizontal streaks like the letters' brushed finish: a neutral grey colour map (so the silver keeps
+  // no tint) and a separate roughness map with a little more swing
+  const W = 64, H = 128, col = new Uint8Array(W * H * 4), rgh = new Uint8Array(W * H * 4);
+  let seed = 7;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let y = 0; y < H; y++) {
+    const row = 0.55 + 0.45 * rnd(), ph = rnd() * 6.28;
+    for (let x = 0; x < W; x++) {
+      const v = Math.max(0, Math.min(1, row + 0.08 * Math.sin(x / W * 6.283 * 2 + ph) + 0.06 * (rnd() - 0.5)));
+      const o = (y * W + x) * 4, b = 236 + Math.round(19 * v), g = 200 + Math.round(55 * v);
+      col[o] = col[o + 1] = col[o + 2] = b; col[o + 3] = 255;
+      rgh[o] = rgh[o + 1] = rgh[o + 2] = g; rgh[o + 3] = 255;
+    }
+  }
+  const tex = (data) => {
+    const t = new THREE.DataTexture(data, W, H, THREE.RGBAFormat);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.magFilter = THREE.LinearFilter; t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true;
+    t.needsUpdate = true;
+    return t;
+  };
+  return { map: tex(col), rough: tex(rgh) };
+}
+
+/* ---------- studio environment the metal reflects ---------- */
+function studio(renderer) {
+  const scene = new THREE.Scene();
+  const lin = (hex, k = 1) => new THREE.Color(hex).multiplyScalar(k);
+  // sky light above, a mid-grey horizon, darker floor: the same top-light / dark-band / lighter-floor rhythm
+  // as the letters' brushed gradient (#F4F6F8 / #A9B1B9 / #C0C6CC); dimmer behind the camera
+  const sky = new THREE.Mesh(new THREE.SphereGeometry(100, 48, 24), new THREE.ShaderMaterial({
+    side: THREE.BackSide, depthWrite: false,
+    uniforms: { cTop: { value: lin("#F4F6F8", 0.95) }, cHor: { value: lin("#A9B1B9", 0.85) }, cLow: { value: lin("#7E868E", 0.8) }, cBot: { value: lin("#C0C6CC", 0.7) } },
+    vertexShader: "varying vec3 vD; void main(){ vD = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+    fragmentShader: `uniform vec3 cTop, cHor, cLow, cBot; varying vec3 vD;
+      void main(){ vec3 d = normalize(vD); float e = d.y;
+        vec3 c = e > 0.0 ? mix(cHor, cTop, smoothstep(0.0, 0.6, e)) : mix(mix(cHor, cLow, smoothstep(0.0, -0.3, e)), cBot, smoothstep(-0.45, -0.95, e));
+        c *= mix(1.0, 0.5, smoothstep(0.15, -0.85, d.z));
+        gl_FragColor = vec4(c, 1.0); }`,
+  }));
+  scene.add(sky);
+  const panel = (w, h, k, x, y, z) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: lin("#FFFFFF", k), side: THREE.DoubleSide }));
+    m.position.set(x, y, z); m.lookAt(0, 0, 0); scene.add(m);
+  };
+  panel(80, 34, 1.4, -12, 64, 40);    // big soft box above and in front: the bright band on cylinders, top edges
+  panel(14, 60, 1.1, -72, 18, 22);    // narrow strip on the left: a clean vertical edge highlight
+  panel(44, 14, 0.7, 34, 44, -58);    // rim from behind, upper right
+  const pm = new THREE.PMREMGenerator(renderer);
+  const rt = pm.fromScene(scene, 0.035);
+  pm.dispose();
+  return rt.texture;
+}
+
+/* ---------- soft highlight shoulder ---------- */
+// Anything brighter than linear 0.6 rolls off smoothly toward white instead of clipping, so a panel facing the
+// light keeps its gradient and never turns into a flat white (plastic) patch. It is applied per material
+// (onBeforeCompile), not by patching THREE.ShaderChunk, so another three.js scene on the same page is untouched.
+const SHOULDER = "{ vec3 c_ = gl_FragColor.rgb; vec3 k_ = vec3( 0.6 );" +
+  " gl_FragColor.rgb = mix( c_, k_ + ( 1.0 - k_ ) * ( 1.0 - exp( - ( c_ - k_ ) / ( 1.0 - k_ ) ) ), step( k_, c_ ) ); }";
+function shoulder(m) {
+  m.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace("#include <tonemapping_fragment>", SHOULDER); };
+  m.customProgramCacheKey = () => "heron-shoulder";
+  return m;
+}
+
+/* ---------- the camera head model ---------- */
+function buildHead() {
+  const brush = brushTexture();
+  const std = (hex, metal, rough, extra) => shoulder(new THREE.MeshStandardMaterial(Object.assign({ color: new THREE.Color(hex), metalness: metal, roughness: rough }, extra || {})));
+  const M = {
+    body: std("#E2E6EA", 1, 0.6, { map: brush.map, roughnessMap: brush.rough }),
+    plate: std("#C3C9CF", 1, 0.32),
+    bright: std("#F4F6F8", 1, 0.22),
+    knurl: std("#A2A9B0", 1, 0.42),
+    inner: std("#80878F", 0.95, 0.5, { side: THREE.DoubleSide }),
+    retain: std("#5C636B", 0.9, 0.42, { side: THREE.DoubleSide }),
+    glass: shoulder(new THREE.MeshPhysicalMaterial({ vertexColors: true, metalness: 0, roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.04,
+      iridescence: 0.55, iridescenceIOR: 1.5, iridescenceThicknessRange: [260, 460], envMapIntensity: 1.5 })),
+  };
+  const head = new THREE.Group();
+  const parts = [];
+  const add = (name, geo, mat, x = 0, y = 0, z = 0) => { const o = new THREE.Mesh(geo, mat); o.name = name; o.position.set(x, y, z); head.add(o); parts.push(o); return o; };
+  const S = 96;
+  // quick-release plate and body
+  add("plate", roundedBox(19, 2.7, 13, 0.8, 2), M.plate, -1.5, 1.3, 0);
+  // (a tighter corner and only a hint of "pillow" so it reads as a machined block, not a soft toy)
+  add("body", roundedBox(24, 22.6, 22, 2.0, 4, 0.1), M.body, -2, 13.7, 0);
+  // viewfinder hump
+  add("hump", hump(10, 6.3, 9.4, 1.4, 0.68, 0.82, 0.08), M.body, -4, 27.4, 0);
+  // top: a small mode dial and the shutter button (vertical lathes)
+  const dial = lathe([[2.4, 0], [2.6, 0.2], [2.6, 1.5], [2.35, 1.75], [0, 1.75]], 48); dial.rotateZ(Math.PI / 2);
+  add("dial", dial, M.bright, 5.2, 24.9, -5);
+  const btn = lathe([[1.35, 0], [1.35, 1.05], [1.15, 1.25], [0, 1.25]], 40); btn.rotateZ(Math.PI / 2);
+  add("button", btn, M.bright, 5.4, 24.9, 5.2);
+  // lens (on the axis 13.5 above the pivot, like the drawing): mount ring, barrel, knurled focus ring,
+  // aperture ring, flared hood with a rolled rim
+  const lens = new THREE.Group();
+  lens.position.y = LENS_Y;
+  head.add(lens);
+  const addL = (name, geo, mat) => { const o = new THREE.Mesh(geo, mat); o.name = name; lens.add(o); parts.push(o); return o; };
+  addL("mount", lathe([[6.8, 9.6], [7.95, 9.6], [8.3, 9.95], [8.3, 12.85], [7.95, 13.2], [7.0, 13.2]], S), M.bright);
+  addL("barrel1", lathe([[7.0, 13.2], [7.0, 15.7]], S), M.plate);
+  addL("focusBack", lathe([[7.0, 15.7], [7.45, 15.7], [7.62, 15.87], [7.62, 16.35], [7.25, 16.35]], S), M.bright);
+  addL("knurl", knurl(KNURL.r0, KNURL.amp, KNURL.x0, KNURL.x1, KNURL.n), M.knurl);
+  addL("focusFront", lathe([[7.25, 22.7], [7.62, 22.7], [7.62, 23.18], [7.45, 23.35], [7.0, 23.35]], S), M.bright);
+  addL("barrel2", lathe([[7.0, 23.35], [7.0, 24.7]], S), M.plate);
+  addL("aperture", lathe([[7.0, 24.7], [7.4, 24.7], [7.62, 24.92], [7.62, 26.98], [7.4, 27.2], [7.0, 27.2]], S), M.bright);
+  addL("barrel3", lathe([[7.0, 27.2], [7.0, 30.4]], S), M.plate);
+  // hood: a gentle flare (1.55x) with a rolled rim; the big front element sits just 1.4 behind the lip,
+  // so most of the coated glass shows in the mouth at rest (a lens, not a megaphone)
+  addL("hood", lathe([[7.0, 30.4], [10.8, 39.6], [11.05, 39.9], [11.0, 40.3], [10.65, 40.5], [10.3, 40.35], [10.15, 40.0]], S), M.bright);
+  addL("hoodInner", lathe([[10.15, 40.0], [9.95, 38.6]], S), M.inner);
+  addL("retain", lathe([[9.95, 38.6], [9.3, 38.6]], S), M.retain);
+  // glass: a shallow dome with a deep blue / purple coating, darkest at the edge
+  const R = 34, base = 9.3, th0 = Math.asin(base / R), xc = 38.6 - R * Math.cos(th0), prof = [], cols = [];
+  const ramp = [[0, "#3A5CA8"], [0.42, "#1A2C62"], [0.78, "#371E4E"], [1, "#07080D"]];
+  const rc = (t) => { for (let i = 1; i < ramp.length; i++) if (t <= ramp[i][0]) { const a = new THREE.Color(ramp[i - 1][1]), b = new THREE.Color(ramp[i][1]); return a.lerp(b, (t - ramp[i - 1][0]) / (ramp[i][0] - ramp[i - 1][0])); } return new THREE.Color(ramp[ramp.length - 1][1]); };
+  for (let i = 0; i <= 14; i++) { const th = th0 * (1 - i / 14), r = R * Math.sin(th); prof.push([r, xc + R * Math.cos(th)]); const c = rc(r / base); cols.push([c.r, c.g, c.b]); }
+  addL("glass", lathe(prof, S, cols), M.glass);
+  return { head, parts, mats: M };
+}
+
+/* ---------- renderer for one head ---------- */
+const nextFrame = () => new Promise((r) => requestAnimationFrame(() => r()));
+
+// build the renderer; "yieldFn" (optional, async) is awaited between the heavier steps so page animation keeps its frames
+export async function createHeadRenderer(yieldFn) {
+  const pause = yieldFn || (() => null);
+  const canvas = document.createElement("canvas");
+  const attrs = { alpha: true, antialias: true, premultipliedAlpha: true, preserveDrawingBuffer: false, depth: true, stencil: false };
+  const context = canvas.getContext("webgl2", attrs);
+  if (!context) throw new Error("heron-cam3d: no WebGL2");     // quietly keep the SVG head
+  const renderer = new THREE.WebGLRenderer(Object.assign({ canvas, context }, attrs));
+  renderer.setPixelRatio(1);
+  renderer.setClearColor(0x000000, 0);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.NoToneMapping;          // the highlight shoulder is applied per material (shoulder())
+  await pause();
+  const scene = new THREE.Scene();
+  scene.environment = studio(renderer);
+  await pause();
+  const { head, parts, mats } = buildHead();
+  // rollG: the in-plane rotation of the post the head sits on (the arm's joints move it); it turns about the view
+  // axis through the pivot, so on screen it is exactly the SVG rotation of the post
+  const yawG = new THREE.Group(), tiltG = new THREE.Group(), rollG = new THREE.Group();
+  tiltG.add(head); yawG.add(tiltG); rollG.add(yawG); scene.add(rollG);
+  const VIEW_AXIS = new THREE.Vector3(0, Math.sin(ELEV), Math.cos(ELEV));
+  // gimbal motor (the SVG one is hidden while this draws): same 11 x 6.6 block, as the short satin cylinder it is;
+  // it lives in the same layer as the head so the head's cast shadow never lands on it (as in the SVG group)
+  const motorGeo = lathe([[5.1, -6.6], [5.5, -6.2], [5.5, -0.55], [5.2, -0.15], [4.6, 0], [0, 0]], 64);
+  motorGeo.rotateZ(Math.PI / 2);
+  const motor = new THREE.Mesh(motorGeo, shoulder(new THREE.MeshStandardMaterial({ color: new THREE.Color("#B5BCC3"), metalness: 1, roughness: 0.36 })));
+  motor.name = "motor";
+  rollG.add(motor);                                   // the motor rides on the post, so it rolls with it
+  const key = new THREE.PointLight(0xffffff, 1.3, 0, 0);
+  scene.add(key);
+  // The metal follows the page light the way the letters do (their SVG lighting is ambient + diffuse, so they
+  // dim as the light moves away): both the key light and the studio reflections scale with the light's angle.
+  const envMats = Object.values(mats).concat([motor.material]).map((m) => [m, m.envMapIntensity]);
+  const setLight = (lx, ly, boost) => {
+    const f = 0.45 + 0.75 * LIGHT_Z / Math.hypot(lx, ly, LIGHT_Z);
+    key.position.set(lx, -ly, LIGHT_Z);
+    key.intensity = 1.3 * f * (1 + 0.75 * boost);
+    for (const [m, base] of envMats) m.envMapIntensity = base * f * (1 + 0.35 * boost);
+  };
+  const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 2000);
+  cam.position.set(0, 600 * Math.sin(ELEV), 600 * Math.cos(ELEV));
+  cam.lookAt(0, 0, 0);
+  const v = new THREE.Vector3();
+  // roll: the post's in-plane rotation in radians, SVG sense (clockwise on screen is positive)
+  const pose = (pan, tilt, roll) => {
+    rollG.quaternion.setFromAxisAngle(VIEW_AXIS, -(roll || 0));
+    yawG.rotation.y = -(YAW0 + Math.max(0, Math.min(Math.PI, pan)) * (Math.PI - 2 * YAW0) / Math.PI);
+    tiltG.rotation.z = -tilt * DEG;
+    rollG.updateMatrixWorld(true);
+  };
+  return {
+    canvas,
+    // kd: canvas pixels per logo unit; (px0, py0): the pivot in canvas pixels
+    layout(w, h, kd, px0, py0) {
+      if (canvas.width !== w || canvas.height !== h) renderer.setSize(w, h, false);
+      cam.left = -px0 / kd; cam.right = (w - px0) / kd; cam.top = py0 / kd; cam.bottom = -(h - py0) / kd;
+      cam.updateProjectionMatrix();
+    },
+    // light: offset of the key light from the pivot in logo units (SVG axes, y down)
+    draw(pan, tilt, lx, ly, boost, roll) {
+      pose(pan, tilt, roll);
+      setLight(lx, ly, boost);
+      renderer.render(scene, cam);
+    },
+    // where a model point lands, as an offset from the pivot in logo units (SVG axes)
+    project(pan, tilt, p, roll) {
+      pose(pan, tilt, roll);
+      v.set(p[0], p[1], p[2]).applyMatrix4(head.matrixWorld);
+      return [v.x, -(v.y * Math.cos(ELEV) - v.z * Math.sin(ELEV))];
+    },
+    // compile every shader up front (in parallel where the browser can) so the first visible frame does not stall
+    warm() { return renderer.compileAsync ? renderer.compileAsync(scene, cam) : Promise.resolve(renderer.compile(scene, cam)); },
+    lost(fn) { canvas.addEventListener("webglcontextlost", fn, false); },
+    // offline use (vector export): RGBA pixels, top row first. mode "beauty" = the shaded render as shown,
+    // mode "id" = every part flat in colour (index + 1) * 12 on red, no antialiasing
+    parts: parts.map((m) => m.name),
+    snapshot(w, h, kd, px0, py0, pan, tilt, lx, ly, mode) {
+      this.layout(w, h, kd, px0, py0);
+      motor.visible = false;                                        // the vector head excludes the motor (camera3.motor draws it)
+      pose(pan, tilt);
+      setLight(lx, ly, 0);
+      const gl = renderer.getContext(), buf = new Uint8Array(w * h * 4);
+      if (mode === "id" || mode === "normal") {
+        const saved = parts.map((m) => m.material), rt = new THREE.WebGLRenderTarget(w, h);
+        const nrm = { vertexShader: "varying vec3 vN; void main(){ vN = normal; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+          fragmentShader: "varying vec3 vN; void main(){ gl_FragColor = vec4(normalize(vN) * 0.5 + 0.5, 1.0); }", side: THREE.DoubleSide };
+        parts.forEach((m, i) => { m.material = mode === "normal" ? new THREE.ShaderMaterial(nrm)
+          : new THREE.MeshBasicMaterial({ color: new THREE.Color().setRGB((i + 1) * 12 / 255, 0, 0, THREE.LinearSRGBColorSpace), toneMapped: false, side: THREE.DoubleSide }); });
+        renderer.setRenderTarget(rt); renderer.setClearColor(0x000000, 1); renderer.clear(); renderer.render(scene, cam);
+        renderer.readRenderTargetPixels(rt, 0, 0, w, h, buf);
+        renderer.setRenderTarget(null); renderer.setClearColor(0x000000, 0);
+        parts.forEach((m, i) => { m.material.dispose(); m.material = saved[i]; }); rt.dispose();
+      } else {
+        renderer.render(scene, cam);
+        gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+      }
+      motor.visible = true;
+      const out = new Uint8Array(w * h * 4);                       // flip to top row first
+      for (let y = 0; y < h; y++) out.set(buf.subarray((h - 1 - y) * w * 4, (h - y) * w * 4), y * w * 4);
+      return out;
+    },
+  };
+}
+export const GEOM = { YAW0, ELEV, LENS_Y, LENS_TIP, KNURL, LIGHT_Z };
+
+/* ---------- hook the renderer into a live HERON logo ---------- */
+const NS = "http://www.w3.org/2000/svg";
+export async function attach(svgId, stageId, sfx, opt) {
+  opt = opt || {};
+  const t0 = performance.now();
+  const svg = document.getElementById(svgId), stage = document.getElementById(stageId);
+  const head = document.getElementById("camHead" + sfx), flash = document.getElementById("flash" + sfx);
+  if (!svg || !stage || !head || !head.parentNode) return null;
+  const tm = /translate\(\s*([-\d.]+)[\s,]+([-\d.]+)/.exec(head.getAttribute("transform") || "");
+  const PX = tm ? +tm[1] : 0, PY = tm ? +tm[2] : 0;
+  const fc = flash && flash.querySelector("circle");            // the burst's own centre in head units
+  const FCX = fc ? +fc.getAttribute("cx") : 46, FCY = fc ? +fc.getAttribute("cy") : -13.5;
+  if (getComputedStyle(stage).position === "static") stage.style.position = "relative";   // the canvas is placed inside it
+  // the SVG gimbal motor: the group just before the head, at the same pivot (final_build.hero_camera)
+  const motorEl = tm && head.previousElementSibling && head.previousElementSibling.getAttribute("transform") === "translate(" + tm[1] + " " + tm[2] + ")"
+    ? head.previousElementSibling : null;
+  let R3;
+  try { R3 = await createHeadRenderer(nextFrame); await nextFrame(); await R3.warm(); await nextFrame(); }
+  catch (e) {                                      // no WebGL (or it failed): the SVG head simply stays
+    document.dispatchEvent(new CustomEvent("heron-cam3d", { detail: { svg, failed: true } }));   // so the page stops waiting
+    return null;
+  }
+
+  const wrap = document.createElement("div");
+  wrap.className = "heron-cam3d";
+  wrap.setAttribute("aria-hidden", "true");
+  wrap.style.cssText = "position:absolute;left:0;top:0;pointer-events:none;visibility:hidden;contain:layout style;";
+  const cv = R3.canvas;
+  cv.style.cssText = "position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;";
+  const fx = document.createElementNS(NS, "svg");
+  fx.setAttribute("aria-hidden", "true");
+  fx.style.cssText = "position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none;";
+  wrap.appendChild(cv); wrap.appendChild(fx); stage.appendChild(wrap);
+
+  const flashHome = flash ? flash.parentNode : null, flashNext = flash ? flash.nextSibling : null;
+  let alive = true, on = false, L = null, last = "", lastShadow = "", lastBox = "", lastArgs = null;
+  const st = { renders: 0, skipped: 0, ms: 0, maxMs: 0 };
+
+  function layout() {
+    const sm = svg.getScreenCTM(), jm = head.parentNode.getScreenCTM();
+    if (!sm || !jm) return null;
+    const pt = svg.createSVGPoint(); pt.x = PX; pt.y = PY;
+    const pc = pt.matrixTransform(jm), pu = pc.matrixTransform(sm.inverse());
+    const rc = stage.getBoundingClientRect(), scale = Math.hypot(sm.a, sm.b), dpr = window.devicePixelRatio || 1;
+    const ss = Math.min(3, Math.max(2, dpr * 1.5)) / dpr;          // supersampling on top of the device pixels
+    const kd = scale * dpr;                                          // device pixels per unit
+    const left = Math.floor((pc.x - EXT.l * scale) * dpr), top = Math.floor((pc.y - EXT.u * scale) * dpr);
+    const Wd = Math.ceil((EXT.l + EXT.r) * kd) + 2, Hd = Math.ceil((EXT.u + EXT.d) * kd) + 2;
+    // the post's rotation in the logo (the arm's shoulder + elbow + wrist angles), so the 3D head rolls with it
+    const rel = sm.inverse().multiply(jm), roll = Math.atan2(rel.b, rel.a);
+    return { scale, dpr, ss, kd, left, top, Wd, Hd, px0: pc.x * dpr - left, py0: pc.y * dpr - top, pu, roll, rcl: rc.left, rct: rc.top };
+  }
+  function place(G) {
+    const box = [G.left, G.top, G.Wd, G.Hd, G.rcl, G.rct, G.dpr, G.ss].join(",");
+    const w = Math.round(G.Wd * G.ss), h = Math.round(G.Hd * G.ss);
+    R3.layout(w, h, G.kd * G.ss, G.px0 * G.ss, G.py0 * G.ss);
+    if (box !== lastBox) {
+      lastBox = box;
+      wrap.style.width = G.Wd / G.dpr + "px"; wrap.style.height = G.Hd / G.dpr + "px";
+      wrap.style.transform = "translate(" + (G.left / G.dpr - G.rcl) + "px," + (G.top / G.dpr - G.rct) + "px)";
+      fx.setAttribute("viewBox", [-G.px0 / G.kd, -G.py0 / G.kd, G.Wd / G.kd, G.Hd / G.kd].map((x) => x.toFixed(3)).join(" "));
+    }
+  }
+  function hideSvgHead() {
+    if (!on) return;
+    head.style.visibility = "hidden";
+    if (motorEl) motorEl.style.visibility = "hidden";
+  }
+  function activate() {
+    on = true;
+    if (flash) fx.appendChild(flash);
+    wrap.style.visibility = "visible";
+    if (opt.static) { hideSvgHead(); return; }
+    // fade the 3D head in over the vector head (same pose), then hide the vector one: no visible swap
+    wrap.style.opacity = "0";
+    wrap.style.transition = "opacity 160ms ease-out";
+    void wrap.offsetWidth;                         // commit the start value so the transition runs
+    wrap.style.opacity = "1";
+    setTimeout(hideSvgHead, 200);
+  }
+  function deactivate() {
+    alive = false; on = false;
+    if (flash && flashHome) { flash.removeAttribute("transform"); flashHome.insertBefore(flash, flashNext); }
+    head.style.visibility = "";
+    if (motorEl) motorEl.style.visibility = "";
+    wrap.remove();
+  }
+  R3.lost(function (e) { e.preventDefault(); deactivate(); });
+
+  const api = {
+    svg, sfx, stats: st, force: null,     // force = [pan, tilt] pins the pose (tests only)
+    ok() { return alive; },
+    last() { return lastArgs; },
+    // called by the page script on every animation step; returns false if the 3D head is gone
+    frame(pan, tilt, lx, ly, fo, sdx, sdy) {
+      if (!alive) return false;
+      lastArgs = [pan, tilt, lx, ly, fo, sdx, sdy];
+      if (api.force) { pan = api.force[0]; tilt = api.force[1]; }
+      const G = layout();
+      if (!G) return true;
+      L = G;
+      const ox = lx - G.pu.x, oy = ly - G.pu.y;
+      const key = [pan.toFixed(4), tilt.toFixed(3), G.roll.toFixed(4), ox.toFixed(1), oy.toFixed(1), fo.toFixed(3), G.left, G.top, G.Wd, G.Hd, G.px0.toFixed(2), G.py0.toFixed(2), G.ss].join("|");
+      if (key !== last) {
+        last = key;
+        const ts = performance.now();
+        place(G);
+        R3.draw(pan, tilt, ox, oy, fo, G.roll);
+        const ms = performance.now() - ts;
+        st.renders++; st.ms += ms; st.maxMs = Math.max(st.maxMs, ms);
+        if (flash) {
+          const q = R3.project(pan, tilt, LENS_TIP, G.roll);
+          flash.setAttribute("transform", "translate(" + (q[0] - FCX).toFixed(2) + " " + (q[1] - FCY).toFixed(2) + ")");
+        }
+        if (!on) activate();
+      } else st.skipped++;
+      const sh = "drop-shadow(" + (sdx * G.scale).toFixed(1) + "px " + (sdy * G.scale).toFixed(1) + "px " + (2.8 * G.scale).toFixed(1) + "px rgba(0,0,0,0.92))";
+      if (sh !== lastShadow) { lastShadow = sh; cv.style.filter = sh; }
+      return true;
+    },
+    // lens front in logo units, for the flash light
+    lens(pan, tilt) {
+      if (api.force) { pan = api.force[0]; tilt = api.force[1]; }
+      const G = layout() || L;                       // fresh: the arm may have moved since the last frame
+      const q = R3.project(pan, tilt, LENS_TIP, G ? G.roll : 0);
+      return G ? [G.pu.x + q[0], G.pu.y + q[1]] : [PX + q[0], PY + q[1]];
+    },
+  };
+  // size the canvas and draw once while it is still hidden, so buffers and textures exist before it shows
+  const G0 = layout();
+  if (G0) { place(G0); R3.draw(0, 0, -150, -50, 0, G0.roll); }
+  st.initMs = Math.round(performance.now() - t0);
+  window.HeronCam3D = window.HeronCam3D || {};
+  window.HeronCam3D[sfx] = api;
+  if (opt.static) {
+    // export page without the live script: neutral pose, light and shadow as written in the markup
+    const ld = document.getElementById("ld" + sfx), so = document.getElementById("soffc" + sfx);
+    const draw = () => api.frame(0, 0, +ld.getAttribute("x"), +ld.getAttribute("y"), 0, +so.getAttribute("dx"), +so.getAttribute("dy"));
+    draw();
+    window.addEventListener("resize", draw);
+    document.documentElement.setAttribute("data-cam3d", "ready");
+  } else {
+    // the stage can change size without a window resize (fonts, container queries): redraw at the new place
+    if ("ResizeObserver" in window) new ResizeObserver(function () { if (lastArgs) { last = ""; api.frame.apply(null, lastArgs); } }).observe(stage);
+    document.dispatchEvent(new CustomEvent("heron-cam3d", { detail: api }));
+  }
+  return api;
+}
+
+attach("heronSvg", "heronStage", "S");
+</script>
+</body></html>
