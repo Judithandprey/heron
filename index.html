@@ -128,6 +128,32 @@ p { margin: 0; }
 .ae-meter i { position: absolute; bottom: 0; width: 1px; height: 6px; margin-left: -0.5px; background: rgba(255, 255, 255, 0.6); }
 .ae-meter i.z { height: 12px; background: #fff; }
 .ae-meter b { position: absolute; bottom: -5px; width: 3px; height: 18px; margin-left: -1.5px; background: var(--tally); will-change: left; }
+/* AI positioning: four pieces. Follow (the pointer is the person), compose (a real group photo), moves (top view), best spot */
+.ps-opt { position: relative; border-top: 1px solid var(--line); }
+.ps-opt.ps-pin { height: 400vh; }
+.ps-opt.ps-pin.ps-short { height: 320vh; }
+.ps-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: radial-gradient(ellipse 55% 62% at 55% 58%, #1c1b19 0%, #121211 55%, var(--bg) 100%); }
+.ps-opt.ps-free .ps-stage { position: relative; cursor: none; touch-action: pan-y; }
+.ps-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.ps-ttl { position: absolute; z-index: 5; left: var(--gx); bottom: clamp(40px, 7vh, 80px); margin: 0; font-weight: 700; font-size: clamp(38px, 4.6vw, 82px); line-height: 1.05; letter-spacing: -0.045em; pointer-events: none; text-shadow: 0 2px 30px rgba(0, 0, 0, 0.4); }
+.ps-ttl span { color: var(--mute); transition: color 0.4s; }
+.ps-ttl span.on { color: var(--fg); }
+.ps-pip { position: absolute; z-index: 4; right: var(--gy); top: 86px; width: min(30vw, 420px); aspect-ratio: 3 / 2; border: 1px solid rgba(255, 255, 255, 0.55); pointer-events: none; }
+.ps-pip i { position: absolute; left: 10px; top: 9px; width: 7px; height: 7px; border-radius: 50%; background: #e5484d; }
+.ps-lock { position: absolute; z-index: 5; pointer-events: none; --c: rgba(255, 255, 255, 0.95);
+  background:
+    linear-gradient(var(--c), var(--c)) left top / 12px 1.5px no-repeat, linear-gradient(var(--c), var(--c)) left top / 1.5px 12px no-repeat,
+    linear-gradient(var(--c), var(--c)) right top / 12px 1.5px no-repeat, linear-gradient(var(--c), var(--c)) right top / 1.5px 12px no-repeat,
+    linear-gradient(var(--c), var(--c)) left bottom / 12px 1.5px no-repeat, linear-gradient(var(--c), var(--c)) left bottom / 1.5px 12px no-repeat,
+    linear-gradient(var(--c), var(--c)) right bottom / 12px 1.5px no-repeat, linear-gradient(var(--c), var(--c)) right bottom / 1.5px 12px no-repeat; }
+.ps-lock.busy { --c: #ff8a3d; }
+.ps-card { position: absolute; left: 0; top: 0; z-index: 4; width: 168px; pointer-events: none; opacity: 0; will-change: transform, opacity; }
+.ps-card .ps-frame { width: 168px; height: 112px; border: 1px solid rgba(255, 255, 255, 0.5); }
+.ps-card.ps-best .ps-frame { border-color: #ff8a3d; border-width: 2px; }
+.ps-card .ps-bar { margin-top: 6px; height: 3px; background: rgba(255, 255, 255, 0.15); }
+.ps-card .ps-bar b { display: block; height: 100%; width: 0; background: #fff; }
+.ps-card.ps-best .ps-bar b { background: #ff8a3d; }
+.ps-load { position: absolute; inset: 0; display: grid; place-items: center; color: var(--mute); z-index: 6; pointer-events: none; }
 /* page 4: the model tour. A tall section with a pinned stage; scroll moves the camera part to part */
 .tour { position: relative; height: 1000vh; border-top: 1px solid var(--line); }
 .tour-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
@@ -263,6 +289,8 @@ p { margin: 0; }
   .tp-n { margin-top: 18px; padding-top: 12px; }
   .tp-n b { font-size: clamp(34px, 9vw, 52px); }
   .tour-rail { display: none; }
+  .ps-pip { width: 46vw; top: 96px; }
+  .ps-card { width: 112px; } .ps-card .ps-frame { width: 112px; height: 75px; }
   .ae-hud { left: var(--gx); right: var(--gy); bottom: auto; top: 130px; }
   .ae-vals { justify-content: space-between; font-size: 13px; }
   .ae-meter { width: 100%; }
@@ -285,7 +313,7 @@ p { margin: 0; }
 <header class="top">
   <a class="brand" href="#shots" aria-label="鹭影 HERON，回到顶部"><img src="assets/logo/heron-wordmark-white.svg" alt="" width="94" height="30"><span>鹭影</span></a>
   <nav aria-label="页面导航">
-    <a href="#shots">镜头</a><a href="#frame">取景</a><a href="#auto">参数</a><a href="#daily">日常</a><a href="#model">模型</a><a href="#numbers">数据</a>
+    <a href="#shots">镜头</a><a href="#frame">取景</a><a href="#auto">参数</a><a href="#psFollow">位置</a><a href="#daily">日常</a><a href="#model">模型</a><a href="#numbers">数据</a>
   </nav>
 </header>
 
@@ -325,6 +353,36 @@ p { margin: 0; }
       <div class="ae-vals"><span>f/2.8</span><span id="aeS">1/2000</span><span id="aeI">ISO 100</span><span id="aeK">5600K</span></div>
       <div class="ae-meter"><i style="left:0%"></i><i style="left:16.6667%"></i><i style="left:33.3333%"></i><i class="z" style="left:50%"></i><i style="left:66.6667%"></i><i style="left:83.3333%"></i><i style="left:100%"></i><b id="aeNeedle"></b></div>
     </div>
+  </div>
+</section>
+
+<section class="ps-opt ps-free" id="psFollow" aria-label="AI 跟拍">
+  <div class="ps-stage" id="psStA">
+    <div class="ps-pip" id="psPipA"><i></i></div>
+    <div class="ps-lock" id="psLockA" hidden></div>
+    <h2 class="ps-ttl">AI 跟拍，<br>你走到哪，镜头跟到哪</h2>
+    <div class="ps-load mono" id="psLoadA">正在载入</div>
+  </div>
+</section>
+
+<section class="ps-opt ps-pin ps-short" id="psCompose" aria-label="AI 构图">
+  <div class="ps-stage">
+    <canvas id="psCvB"></canvas>
+    <h2 class="ps-ttl">AI 构图，<br>一个人都不落下</h2>
+  </div>
+</section>
+
+<section class="ps-opt ps-pin" id="psMoves" aria-label="AI 走位">
+  <div class="ps-stage" id="psStC">
+    <div class="ps-pip" id="psPipC"><i></i></div>
+    <div class="ps-lock" id="psLockC" hidden></div>
+    <h2 class="ps-ttl" id="psMovesT">AI 走位，<br><span>跟随</span>、<span>环绕</span>、<span>换角度</span></h2>
+  </div>
+</section>
+
+<section class="ps-opt ps-pin" id="psSpot" aria-label="AI 选机位">
+  <div class="ps-stage" id="psStD">
+    <h2 class="ps-ttl" id="psTtlD">AI 选机位，<br>合影找最佳角度</h2>
   </div>
 </section>
 
@@ -2118,6 +2176,609 @@ if (renderer) {
   }
   tick();
 }
+</script>
+<script>
+// ---------- B: the frame finds the composition (2D, a real group photo). Scroll drives it.
+(() => {
+  const sec = document.getElementById("psCompose"), cv = document.getElementById("psCvB"), g = cv.getContext("2d");
+  const img = new Image();
+  img.src = "assets/daily/e3OUQGT9bWU.jpg";
+  const IA = 1600 / 1067;
+  const FACES = [[0.18, 0.36, 0.11, 0.2], [0.315, 0.52, 0.09, 0.16], [0.565, 0.43, 0.1, 0.18], [0.82, 0.37, 0.1, 0.2]];
+  // frames in photo coordinates: centre x, centre y, width (fraction of photo width), rotation (deg); 3:2
+  const BAD = [0.31, 0.47, 0.4, -7], GOOD = [0.5, 0.52, 0.92, 0];
+  const ease = (t) => t * t * (3 - 2 * t), cl = (v) => Math.min(1, Math.max(0, v)), lerp = (a, b, t) => a + (b - a) * t;
+  let W = 1, H = 1, dpr = 1;
+  const size = () => { const r = cv.getBoundingClientRect(); dpr = Math.min(devicePixelRatio || 1, 2); W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; };
+  new ResizeObserver(size).observe(cv);
+  const t0 = performance.now();
+  function draw() {
+    requestAnimationFrame(draw);
+    const r = sec.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > innerHeight || !img.complete) return;
+    const p = typeof window.__pb === "number" ? window.__pb : cl(-r.top / Math.max(1, r.height - innerHeight));
+    const now = (performance.now() - t0) / 1000;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.fillStyle = "#0b0b0b"; g.fillRect(0, 0, W, H);
+    // photo laid out to cover the screen
+    const va = W / H;
+    let pw, ph;
+    if (va > IA) { pw = W; ph = W / IA; } else { ph = H; pw = H * IA; }
+    const px = (W - pw) / 2, py = (H - ph) / 2;
+    const P = (x, y) => [px + x * pw, py + y * ph];
+    // timeline: 0-.15 the bad frame; .15-.35 faces found; .35-.8 frame walks to the good one; .8-1 the shot
+    const look = ease(cl((p - 0.12) / 0.2)), move = ease(cl((p - 0.35) / 0.42)), shot = ease(cl((p - 0.84) / 0.14));
+    const F = BAD.map((v, i) => lerp(v, GOOD[i], move));
+    const fw = F[2] * pw, fh = fw / 1.5;
+    const [fx, fy] = P(F[0], F[1]);
+    // the shot: the frame grows to fill the screen
+    const sc = lerp(1, Math.max(W / fw, H / fh), shot);
+    g.save();
+    g.translate(W / 2, H / 2); g.scale(sc, sc); g.translate(-W / 2 + (W / 2 - fx) * shot, -H / 2 + (H / 2 - fy) * shot);
+    g.globalAlpha = 1; g.filter = "brightness(0.32) saturate(0.6)";
+    g.drawImage(img, px, py, pw, ph);
+    g.filter = "none";
+    g.save();
+    g.translate(fx, fy); g.rotate(F[3] * Math.PI / 180);
+    g.beginPath(); g.rect(-fw / 2, -fh / 2, fw, fh); g.clip();
+    g.rotate(-F[3] * Math.PI / 180); g.translate(-fx, -fy);
+    g.drawImage(img, px, py, pw, ph);
+    g.restore();
+    // frame lines, thirds grid and corner marks
+    g.save();
+    g.translate(fx, fy); g.rotate(F[3] * Math.PI / 180);
+    g.strokeStyle = "rgba(255,255,255," + (0.9 * (1 - shot)).toFixed(3) + ")"; g.lineWidth = 1.2 / sc;
+    g.strokeRect(-fw / 2, -fh / 2, fw, fh);
+    g.strokeStyle = "rgba(255,255,255," + (0.22 * (1 - shot) * (0.4 + 0.6 * move)).toFixed(3) + ")"; g.lineWidth = 1 / sc;
+    g.beginPath();
+    for (const k of [1 / 3, 2 / 3]) { g.moveTo(-fw / 2 + fw * k, -fh / 2); g.lineTo(-fw / 2 + fw * k, fh / 2); g.moveTo(-fw / 2, -fh / 2 + fh * k); g.lineTo(fw / 2, -fh / 2 + fh * k); }
+    g.stroke();
+    // level indicator: a short horizon line, orange while tilted
+    const tilt = Math.abs(F[3]);
+    g.strokeStyle = tilt > 0.5 ? "rgba(255,138,61," + (1 - shot) + ")" : "rgba(255,255,255," + (0.8 * (1 - shot)) + ")"; g.lineWidth = 2 / sc;
+    g.beginPath(); g.moveTo(-fw * 0.08, 0); g.lineTo(fw * 0.08, 0); g.stroke();
+    g.restore();
+    // faces: found one by one, orange while the frame is moving, white when it settles
+    FACES.forEach((f, n) => {
+      const a = ease(cl((p - 0.14 - n * 0.04) / 0.06)) * (1 - shot);
+      if (a <= 0.01) return;
+      const [cx, cy] = P(f[0], f[1]);
+      const bw = f[2] * pw * (1 + 0.5 * (1 - ease(cl((p - 0.14 - n * 0.04) / 0.06)))), bh = f[3] * ph * (bw / (f[2] * pw));
+      const busy = p > 0.14 && p < 0.8;
+      g.strokeStyle = busy ? "rgba(255,138,61," + a + ")" : "rgba(255,255,255," + a + ")"; g.lineWidth = 1.5 / sc;
+      const L = 12 / sc, x0 = cx - bw / 2, y0 = cy - bh / 2, x1 = cx + bw / 2, y1 = cy + bh / 2;
+      g.beginPath();
+      g.moveTo(x0, y0 + L); g.lineTo(x0, y0); g.lineTo(x0 + L, y0);
+      g.moveTo(x1 - L, y0); g.lineTo(x1, y0); g.lineTo(x1, y0 + L);
+      g.moveTo(x1, y1 - L); g.lineTo(x1, y1); g.lineTo(x1 - L, y1);
+      g.moveTo(x0 + L, y1); g.lineTo(x0, y1); g.lineTo(x0, y1 - L);
+      g.stroke();
+    });
+    g.restore();
+    // a small top-down map: the robot backs off and turns until everyone fits
+    const m = Math.min(220, W * 0.36), mx = W - m - 24, my = H - m * 0.75 - Math.max(40, H * 0.07);
+    const ma = 1 - shot;
+    if (ma > 0.01) {
+      g.save(); g.globalAlpha = ma;
+      g.strokeStyle = "rgba(255,255,255,0.35)"; g.lineWidth = 1; g.strokeRect(mx, my, m, m * 0.75);
+      const S = (x, z) => [mx + m * (0.5 + x / 6), my + m * 0.75 * (0.3 + z / 4.5)];
+      // people in a loose row
+      g.fillStyle = "#ece9e2";
+      for (const f of FACES) { const [x, y] = S((f[0] - 0.5) * 3.2, 0); g.beginPath(); g.arc(x, y, 3.2, 0, 7); g.fill(); }
+      // robot: from close and to the left, to further back and centred
+      const rx = lerp(-0.9, 0.05, move), rz = lerp(1.6, 2.7, move), ra = lerp(-0.32, 0, move);
+      const half = lerp(0.36, 0.62, move);
+      const [ox, oy] = S(rx, rz);
+      g.fillStyle = "rgba(255,255,255,0.07)"; g.strokeStyle = "rgba(255,255,255,0.35)";
+      g.beginPath(); g.moveTo(ox, oy);
+      const L = m * 0.55;
+      g.lineTo(ox + Math.sin(ra - half) * L, oy - Math.cos(ra - half) * L);
+      g.lineTo(ox + Math.sin(ra + half) * L, oy - Math.cos(ra + half) * L);
+      g.closePath(); g.fill(); g.stroke();
+      g.save(); g.translate(ox, oy); g.rotate(ra);
+      g.fillStyle = "#c9c6bf"; g.fillRect(-7, -5, 14, 10);
+      g.fillStyle = "#ff8a3d"; g.fillRect(-2, -9, 4, 4);
+      g.restore();
+      g.restore();
+    }
+  }
+  draw();
+})();
+</script>
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import * as SkeletonUtils from "three/addons/utils/SkeletonUtils.js";
+
+const DEG = Math.PI / 180;
+const L1 = 0.65, L2 = 0.65, SH = 0.45, FA_Y = 0.074, CAM_Z = 0.255;
+const EYE = { waist: 0, shoulder: 95, forearm: 25, wrist: 0, pan: 0 };
+const ease = (t) => t * t * (3 - 2 * t), cl = (v) => Math.min(1, Math.max(0, v)), lerp = (a, b, t) => a + (b - a) * t;
+const wrapA = (a) => Math.atan2(Math.sin(a), Math.cos(a));
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+async function loadBuf(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const b64 = await res.text();
+  const bin = atob(b64.trim());
+  const gz = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) gz[i] = bin.charCodeAt(i);
+  return new Response(new Blob([gz]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer();
+}
+const loader = new GLTFLoader();
+const parse = (buf) => new Promise((res, rej) => loader.parse(buf, "", res, rej));
+const ASSETS = Promise.all([loadBuf("assets/shell_indoor.glb.gz.b64.txt").then(parse), loadBuf("assets/mannequin.glb.gz.b64.txt").then(parse)]);
+
+// ---- shared look: the tour's studio (soft boxes in a dark room) and the sealed concrete floor
+function studioEnv(renderer) {
+  const s = new THREE.Scene();
+  s.add(new THREE.Mesh(new THREE.SphereGeometry(14, 48, 24), new THREE.ShaderMaterial({
+    side: THREE.BackSide, depthWrite: false,
+    vertexShader: "varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+    fragmentShader: "varying vec3 vP; void main(){ float h = normalize(vP).y; vec3 c = mix(vec3(0.012), vec3(0.12), smoothstep(-0.08, 0.06, h)); c = mix(c, vec3(0.35), smoothstep(0.3, 1.0, h)); gl_FragColor = vec4(c, 1.0); }",
+  })));
+  const box = (w, h, p, k, tint, look) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(tint).multiplyScalar(k), side: THREE.DoubleSide }));
+    m.position.set(...p); m.lookAt(...(look || [0, p[1] * 0.4, 0])); s.add(m);
+  };
+  box(4.0, 2.4, [0.3, 4.2, 0.5], 10, 0xffffff, [0.3, 0, 0.5]);
+  box(2.6, 3.2, [-3.0, 1.7, 2.6], 14, 0xfff1e2);
+  box(0.9, 3.8, [3.0, 1.9, -2.8], 18, 0xe4edff);
+  box(2.4, 3.0, [3.6, 1.6, 2.4], 6, 0xffeedd);
+  box(5.0, 0.5, [0, 1.0, -5.0], 8, 0xffffff);
+  box(0.6, 3.0, [-4.2, 1.6, -2.0], 10, 0xffffff);
+  const pm = new THREE.PMREMGenerator(renderer);
+  const t = pm.fromScene(s, 0.02).texture;
+  pm.dispose();
+  return t;
+}
+const tl = new THREE.TextureLoader();
+const TEX = {};
+for (const n of ["diff", "rough", "nor"]) {
+  const t = tl.load("assets/floor/concrete_" + n + ".jpg");
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(20 / 2.4, 20 / 2.4);
+  if (n === "diff") t.colorSpace = THREE.SRGBColorSpace;
+  TEX[n] = t;
+}
+function floorMesh(fade) {
+  const mat = new THREE.MeshStandardMaterial({ map: TEX.diff, roughnessMap: TEX.rough, normalMap: TEX.nor, normalScale: new THREE.Vector2(0.7, 0.7), color: 0x9a9a9a, roughness: 0.75, metalness: 0, envMapIntensity: 0.35, transparent: true });
+  mat.onBeforeCompile = (sh) => {
+    sh.uniforms.uFade = fade;
+    sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nvarying vec3 vW;").replace("#include <project_vertex>", "#include <project_vertex>\nvW = (modelMatrix * vec4(transformed, 1.0)).xyz;");
+    sh.fragmentShader = sh.fragmentShader.replace("#include <common>", "#include <common>\nuniform vec4 uFade;\nvarying vec3 vW;").replace("#include <opaque_fragment>", "diffuseColor.a *= 1.0 - smoothstep(uFade.z, uFade.w, length(vW.xz - uFade.xy));\n#include <opaque_fragment>");
+  };
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), mat);
+  m.rotation.x = -Math.PI / 2;
+  m.receiveShadow = true;
+  m.renderOrder = -1;
+  return m;
+}
+function makeStage(host, o) {
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.75));
+  renderer.setClearColor(0x000000, 0);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.domElement.setAttribute("aria-hidden", "true");
+  host.prepend(renderer.domElement);
+  const scene = new THREE.Scene();
+  scene.environment = studioEnv(renderer);
+  const key = new THREE.DirectionalLight(0xfff3e6, 1.9);
+  key.castShadow = true;
+  key.shadow.mapSize.set(2048, 2048);
+  key.shadow.bias = -0.0003; key.shadow.normalBias = 0.012;
+  const S = o.shadow || 4;
+  Object.assign(key.shadow.camera, { left: -S, right: S, top: S, bottom: -S, near: 0.5, far: 20 });
+  key.shadow.camera.updateProjectionMatrix();
+  scene.add(key, key.target);
+  const rim = new THREE.DirectionalLight(0xdfe8ff, 0.7); rim.position.set(3, 2.2, -3); scene.add(rim);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x0c0c0c, 0.12));
+  const fade = { value: new THREE.Vector4(0, 0, o.r0 || 2.2, o.r1 || 5.5) };
+  scene.add(floorMesh(fade));
+  const camera = new THREE.PerspectiveCamera(o.fov || 30, 1, 0.05, 60);
+  const st = { renderer, scene, camera, key, fade, W: 1, H: 1, host };
+  const resize = () => { st.W = host.clientWidth; st.H = host.clientHeight; renderer.setSize(st.W, st.H, false); camera.aspect = st.W / st.H; camera.updateProjectionMatrix(); };
+  new ResizeObserver(resize).observe(host);
+  resize();
+  Object.defineProperty(st, "visible", { get() { const r = host.getBoundingClientRect(); return r.bottom > -100 && r.top < innerHeight + 100; } });
+  st.light = (x, z) => { key.target.position.set(x, 0, z); key.position.set(x - 1.5, 4.8, z + 2.0); fade.value.x = x; fade.value.y = z; };
+  // an extra view drawn into a rectangle of the same canvas (picture in picture)
+  st.inset = (cam, el, hide) => {
+    if (hide) hide.visible = false;
+    const r = el.getBoundingClientRect(), h = host.getBoundingClientRect();
+    const x = r.left - h.left, y = h.bottom - r.bottom, w = r.width, hh = r.height;
+    cam.aspect = w / hh; cam.updateProjectionMatrix();
+    renderer.setScissorTest(true);
+    renderer.setScissor(x, y, w, hh); renderer.setViewport(x, y, w, hh);
+    renderer.setClearColor(0x0b0b0b, 1); renderer.clear();
+    renderer.render(scene, cam);
+    renderer.setClearColor(0x000000, 0);
+    renderer.setScissorTest(false);
+    renderer.setViewport(0, 0, st.W, st.H);
+    if (hide) hide.visible = true;
+  };
+  return st;
+}
+
+// ---- robot (arm v2, indoor shell): a fresh copy per stage, joints by name, wheels that turn
+let MATS_DONE = false;
+function makeRobot(gltf) {
+  if (!MATS_DONE) {
+    gltf.scene.traverse((o) => { if (o.isMesh) { o.material.envMapIntensity = 2.2; if (o.material.name === "anodised_silver_blasted") o.material.roughness = 0.24; } });
+    MATS_DONE = true;
+  }
+  const scn = gltf.scene.clone(true);
+  const J = {};
+  scn.traverse((o) => { if (o.isMesh) o.castShadow = o.receiveShadow = true; for (const j of ["waist", "shoulder", "elbow", "wrist", "head", "frontaxle", "root"]) if (o.name === "indoor_" + j) J[j] = o; });
+  scn.updateMatrixWorld(true);
+  const wheels = [];
+  for (const w of ["FL", "FR", "RL", "RR"]) {
+    const parts = [];
+    scn.traverse((o) => { if (o.name.startsWith("indoor_wheel" + w + "_")) parts.push(o); });
+    if (!parts.length) continue;
+    const parent = parts[0].parent;
+    const box = new THREE.Box3();
+    parts.forEach((p) => box.expandByObject(p));
+    const c = box.getCenter(new THREE.Vector3());
+    const pivot = new THREE.Group();
+    parent.add(pivot);
+    pivot.position.copy(parent.worldToLocal(c.clone()));
+    pivot.updateMatrixWorld(true);
+    parts.forEach((p) => pivot.attach(p));
+    wheels.push(pivot);
+  }
+  const obj = new THREE.Group();
+  obj.add(scn);
+  const R = { obj, J, wheels, x: 0, z: 0, h: 0, waist: 0, roll: 0, speed: 0 };
+  R.pose = (P) => {
+    const rot = (o, ax, d) => { if (o) o.quaternion.setFromAxisAngle(ax === "y" ? Y : Z, d * DEG); };
+    const s = P.shoulder * DEG, f = P.forearm * DEG;
+    const ex = L1 * Math.cos(s), ez = SH + L1 * Math.sin(s);
+    rot(J.waist, "y", P.waist); rot(J.shoulder, "z", P.shoulder);
+    J.elbow.position.set(ex, ez, 0); rot(J.elbow, "z", P.forearm);
+    J.wrist.position.set(ex + L2 * Math.cos(f), ez + L2 * Math.sin(f), -FA_Y); rot(J.wrist, "z", -P.wrist);
+    rot(J.head, "y", P.pan || 0);
+  };
+  R.place = () => {
+    obj.position.set(R.x, 0, R.z);
+    obj.rotation.y = R.h;
+    for (const w of wheels) w.rotation.z = -R.roll / 0.1;
+    R.pose(Object.assign({}, EYE, { waist: R.waist }));
+    obj.updateMatrixWorld(true);
+  };
+  // drive by a distance along the heading
+  R.drive = (d) => { R.x += Math.cos(R.h) * d; R.z -= Math.sin(R.h) * d; R.roll += d; };
+  R.lens = () => J.head.localToWorld(new THREE.Vector3(0, CAM_Z, 0));
+  // turret: point the arm at a world point
+  R.aimAt = (px, pz, k) => {
+    const a = Math.atan2(-(pz - R.z), px - R.x);
+    const want = wrapA(a - R.h) / DEG;
+    R.waist += wrapA((want - R.waist) * DEG) / DEG * k;
+  };
+  return R;
+}
+const Y = new THREE.Vector3(0, 1, 0), Z = new THREE.Vector3(0, 0, 1);
+
+// ---- people: the CC0 mannequin (Quaternius, Universal Animation Library) in matte grey, walk and idle blended by speed
+const BODY = new THREE.MeshStandardMaterial({ color: 0xc9c5bd, roughness: 0.62, metalness: 0, envMapIntensity: 1.0 });
+const JOINT = new THREE.MeshStandardMaterial({ color: 0x77736d, roughness: 0.5, metalness: 0, envMapIntensity: 1.0 });
+function makePerson(gltf, idleName) {
+  const obj = SkeletonUtils.clone(gltf.scene);
+  obj.traverse((o) => { if (o.isMesh) { o.material = o.material.name === "M_Joints" ? JOINT : BODY; o.castShadow = o.receiveShadow = true; o.frustumCulled = false; } });
+  const mixer = new THREE.AnimationMixer(obj);
+  const clip = (n) => gltf.animations.find((a) => a.name === n);
+  const idle = mixer.clipAction(clip(idleName || "Idle_Loop")), walk = mixer.clipAction(clip("Walk_Loop"));
+  idle.play(); walk.play();
+  idle.time = Math.random() * idle.getClip().duration;
+  const W = walk.getClip().duration, STRIDE = 1.3;     // metres per walk cycle
+  const P = { obj, x: 0, z: 0, face: 0, w: 0, dist: 0 };
+  // walk weight follows speed; the walk cycle is driven by distance so the feet don't skate
+  P.update = (dt, speed) => {
+    P.w += ((speed > 0.08 ? 1 : 0) - P.w) * Math.min(1, dt * 6);
+    walk.setEffectiveWeight(P.w); idle.setEffectiveWeight(1 - P.w);
+    walk.time = ((P.dist / STRIDE) % 1) * W;
+    walk.paused = true;
+    mixer.update(dt);
+    obj.position.set(P.x, 0, P.z);
+    obj.rotation.y = P.face;
+  };
+  return P;
+}
+const fwdOf = (face) => [Math.sin(face), Math.cos(face)];
+
+// ---------- AI follow: you are the subject. The pointer is where the person walks; the robot keeps them framed.
+(async () => {
+  const host = document.getElementById("psStA"), pip = document.getElementById("psPipA"), lock = document.getElementById("psLockA");
+  const st = makeStage(host, { shadow: 4.5, r0: 2.6, r1: 5.4, fov: 30 });
+  const [rg, mg] = await ASSETS;
+  document.getElementById("psLoadA").hidden = true;
+  const R = makeRobot(rg), P = makePerson(mg);
+  st.scene.add(R.obj, P.obj);
+  R.x = 2.2; R.z = -0.6; R.h = Math.PI; P.x = -0.6; P.z = 0.4; P.face = 0.6;
+  st.camera.position.set(4.6, 4.6, 7.4); st.camera.lookAt(-0.3, 0.45, 0.2);
+  const rcam = new THREE.PerspectiveCamera(32, 1.5, 0.05, 40);
+  // the spot the person heads for: the pointer on the floor, or a slow wander when nobody is pointing
+  const ring = new THREE.Mesh(new THREE.RingGeometry(0.22, 0.25, 48), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.45, depthWrite: false }));
+  ring.rotation.x = -Math.PI / 2; ring.position.y = 0.005; st.scene.add(ring);
+  const cone = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.06, depthWrite: false, side: THREE.DoubleSide }));
+  cone.geometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(9), 3));
+  st.scene.add(cone);
+  const T = { x: P.x, z: P.z }, ray = new THREE.Raycaster(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), hit = new THREE.Vector3();
+  let lastPoint = -1e9;
+  const point = (e) => {
+    const r = host.getBoundingClientRect();
+    ray.setFromCamera(new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), st.camera);
+    if (ray.ray.intersectPlane(plane, hit)) {
+      const d = Math.hypot(hit.x, hit.z), m = Math.min(1, 2.8 / Math.max(d, 1e-3));
+      T.x = hit.x * m; T.z = hit.z * m; lastPoint = performance.now();
+    }
+  };
+  host.addEventListener("pointermove", point);
+  host.addEventListener("pointerdown", point);
+  const clock = new THREE.Clock();
+  let tw = 0;
+  const v3 = new THREE.Vector3();
+  function tick() {
+    requestAnimationFrame(tick);
+    const dt = Math.min(clock.getDelta(), 0.05);
+    if (!st.visible) return;
+    tw += dt;
+    if (performance.now() - lastPoint > 3500) { T.x = 1.9 * Math.sin(tw * 0.23); T.z = 1.3 * Math.sin(tw * 0.46); }
+    // person: turn toward the spot, then walk
+    const dx = T.x - P.x, dz = T.z - P.z, d = Math.hypot(dx, dz);
+    let v = 0;
+    if (d > 0.15) {
+      const want = Math.atan2(dx, dz), diff = wrapA(want - P.face);
+      P.face += Math.sign(diff) * Math.min(Math.abs(diff), dt * 4.5);
+      v = Math.min(1.25, d * 1.8) * Math.max(0, Math.cos(diff));
+      const [fx, fz] = fwdOf(P.face);
+      P.x += fx * v * dt; P.z += fz * v * dt; P.dist += v * dt;
+    }
+    P.update(dt, v);
+    // robot: stand off 2.3 m, a little to the side of where the person faces, and drive there like a car
+    const [fx, fz] = fwdOf(P.face);
+    const side = Math.sign((R.x - P.x) * fz - (R.z - P.z) * fx) || 1;
+    const aa = P.face + side * 0.5;
+    const gx = P.x + Math.sin(aa) * 2.3, gz = P.z + Math.cos(aa) * 2.3;
+    const tx = gx - R.x, tz = gz - R.z, td = Math.hypot(tx, tz);
+    let rv = 0;
+    if (td > 0.25) {
+      const hT = Math.atan2(-tz, tx), diff = wrapA(hT - R.h);
+      R.h += Math.sign(diff) * Math.min(Math.abs(diff), dt * 1.6);
+      rv = Math.min(1.1, td * 1.2) * Math.max(0, Math.cos(diff));
+      R.drive(rv * dt);
+    }
+    // keep clear of the person
+    const px = R.x - P.x, pz = R.z - P.z, pd = Math.hypot(px, pz);
+    if (pd < 1.3) { R.x = P.x + px / pd * 1.3; R.z = P.z + pz / pd * 1.3; }
+    R.speed = rv;
+    R.aimAt(P.x, P.z, Math.min(1, dt * 5));
+    R.place();
+    ring.position.set(T.x, 0.005, T.z);
+    ring.material.opacity = performance.now() - lastPoint < 3500 ? 0.55 : 0.18;
+    // what the robot sees, and the cone it sees it through
+    const L = R.lens();
+    rcam.position.copy(L); rcam.lookAt(P.x, 1.35, P.z);
+    const dir = v3.set(P.x - L.x, 0, P.z - L.z).normalize(), ha = 16 * DEG, len = 3.4;
+    const pos = cone.geometry.attributes.position;
+    const ca = Math.atan2(dir.x, dir.z);
+    pos.setXYZ(0, L.x, 0.01, L.z);
+    pos.setXYZ(1, L.x + Math.sin(ca - ha) * len, 0.01, L.z + Math.cos(ca - ha) * len);
+    pos.setXYZ(2, L.x + Math.sin(ca + ha) * len, 0.01, L.z + Math.cos(ca + ha) * len);
+    pos.needsUpdate = true; cone.geometry.computeBoundingSphere();
+    st.light((P.x + R.x) / 2, (P.z + R.z) / 2);
+    st.renderer.render(st.scene, st.camera);
+    cone.visible = false; ring.visible = false;
+    st.inset(rcam, pip, R.obj);
+    cone.visible = true; ring.visible = true;
+    // lock box around the upper body in the robot's view
+    const a = new THREE.Vector3(P.x, 1.86, P.z).project(rcam), b = new THREE.Vector3(P.x, 0.95, P.z).project(rcam);
+    const pr = pip.getBoundingClientRect(), hr = host.getBoundingClientRect();
+    const cx = pr.left - hr.left + (a.x + 1) / 2 * pr.width, top = pr.top - hr.top + (1 - a.y) / 2 * pr.height, bot = pr.top - hr.top + (1 - b.y) / 2 * pr.height;
+    const bh = Math.max(10, bot - top), bw = bh * 0.62;
+    lock.hidden = false;
+    Object.assign(lock.style, { left: (cx - bw / 2).toFixed(1) + "px", top: top.toFixed(1) + "px", width: bw.toFixed(1) + "px", height: bh.toFixed(1) + "px" });
+    lock.classList.toggle("busy", rv > 0.05 || v > 0.05);
+  }
+  tick();
+})();
+
+// ---------- C: seen from above. Three moves played by scroll: follow, orbit, change of angle.
+(async () => {
+  const sec = document.getElementById("psMoves"), host = document.getElementById("psStC"), pip = document.getElementById("psPipC"), lock = document.getElementById("psLockC");
+  const moves = [...document.querySelectorAll("#psMovesT span")];
+  const st = makeStage(host, { shadow: 6, r0: 4.2, r1: 7.5, fov: 26 });
+  const [rg, mg] = await ASSETS;
+  const R = makeRobot(rg), P = makePerson(mg, "Idle_Talking_Loop");
+  st.scene.add(R.obj, P.obj);
+  st.camera.position.set(0.4, 12.5, 4.2); st.camera.lookAt(0.4, 0, 0.2);
+  const rcam = new THREE.PerspectiveCamera(32, 1.5, 0.05, 40);
+  // trails: where the robot and the person have been in this move
+  const trail = (color, op) => { const g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3 * 240), 3)); const l = new THREE.Line(g, new THREE.LineDashedMaterial({ color, transparent: true, opacity: op, dashSize: 0.12, gapSize: 0.1, depthWrite: false })); l.frustumCulled = false; st.scene.add(l); return l; };
+  const tR = trail(0xff8a3d, 0.9), tP = trail(0xffffff, 0.35);
+  const cone = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.07, depthWrite: false, side: THREE.DoubleSide }));
+  cone.geometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(9), 3));
+  st.scene.add(cone);
+  // person path for the follow move (a gentle S across the floor)
+  const pathP = (u) => [lerp(-3.2, 2.2, u), 0.9 * Math.sin(u * Math.PI * 1.2) - 0.4];
+  const END = pathP(1), FACE_END = Math.atan2(2.2 - pathP(0.98)[0], END[1] - pathP(0.98)[1]);
+  // robot state as a function of scroll progress (so scrolling back plays it backwards)
+  function stateAt(p) {
+    if (p < 0.34) {                      // follow: walk the S; the robot leads, backing up ahead and to the side, so it films the face
+      const u = ease(cl(p / 0.32));
+      const [x, z] = pathP(u), [x2, z2] = pathP(Math.min(1, u + 0.01));
+      const face = Math.atan2(x2 - x, z2 - z);
+      const [fx, fz] = fwdOf(face);
+      const rx = x + fx * 1.9 + fz * 0.9, rz = z + fz * 1.9 - fx * 0.9;
+      return { px: x, pz: z, face, rx, rz, move: 0, u };
+    }
+    if (p < 0.67) {                      // orbit: the person stops; the robot circles round them
+      const u = ease(cl((p - 0.36) / 0.29));
+      const [fx, fz] = fwdOf(FACE_END);
+      const a0 = Math.atan2(fx * 1.9 + fz * 0.9, fz * 1.9 - fx * 0.9), r = Math.hypot(1.9, 0.9);
+      const a = a0 + u * 1.55 * Math.PI;
+      return { px: END[0], pz: END[1], face: FACE_END, rx: END[0] + Math.sin(a) * r, rz: END[1] + Math.cos(a) * r, move: 1, u };
+    }
+    const u = ease(cl((p - 0.69) / 0.29));   // change of angle: the person turns; the robot goes round to the front
+    const face = FACE_END + u * 2.1;
+    const [fx0, fz0] = fwdOf(FACE_END);
+    const a0 = Math.atan2(fx0 * 1.9 + fz0 * 0.9, fz0 * 1.9 - fx0 * 0.9) + 1.55 * Math.PI, r = Math.hypot(1.9, 0.9);
+    const a1 = face + 0.35;
+    const a = a0 + wrapA(a1 - a0) * u, rr = lerp(r, 2.4, u);
+    return { px: END[0], pz: END[1], face, rx: END[0] + Math.sin(a) * rr, rz: END[1] + Math.cos(a) * rr, move: 2, u };
+  }
+  let prev = null, lastMove = -1;
+  const histR = [], histP = [];
+  const clock = new THREE.Clock();
+  const v3 = new THREE.Vector3();
+  function tick() {
+    requestAnimationFrame(tick);
+    const dt = Math.min(clock.getDelta(), 0.05);
+    if (!st.visible) return;
+    const r = sec.getBoundingClientRect();
+    const p = typeof window.__pc === "number" ? window.__pc : cl(-r.top / Math.max(1, r.height - innerHeight));
+    const S = stateAt(p);
+    if (S.move !== lastMove) { histR.length = 0; histP.length = 0; lastMove = S.move; moves.forEach((m, i) => m.classList.toggle("on", i === S.move)); }
+    // person
+    const dP = prev ? Math.hypot(S.px - P.x, S.pz - P.z) : 0;
+    P.x = S.px; P.z = S.pz; P.face = S.face; P.dist += dP;
+    P.update(dt, dt > 0 ? dP / dt : 0);
+    // robot: heading follows its own motion; wheels roll with distance
+    const dRx = S.rx - (prev ? prev.rx : S.rx), dRz = S.rz - (prev ? prev.rz : S.rz), dR = Math.hypot(dRx, dRz);
+    if (dR > 1e-4) {
+      let hT = Math.atan2(-dRz, dRx);
+      if (Math.abs(wrapA(hT - R.h)) > Math.PI / 2) hT = wrapA(hT + Math.PI);   // reversing is fine
+      R.h += wrapA(hT - R.h) * Math.min(1, dt * 8);
+    }
+    R.x = S.rx; R.z = S.rz; R.roll += dR;
+    R.aimAt(P.x, P.z, 1);
+    R.place();
+    prev = S;
+    histR.push([R.x, R.z]); histP.push([P.x, P.z]);
+    if (histR.length > 240) { histR.shift(); histP.shift(); }
+    const fill = (l, h) => { const a = l.geometry.attributes.position; h.forEach((q, i) => a.setXYZ(i, q[0], 0.012, q[1])); l.geometry.setDrawRange(0, h.length); a.needsUpdate = true; l.computeLineDistances(); };
+    fill(tR, histR); fill(tP, histP);
+    const L = R.lens();
+    rcam.position.copy(L); rcam.lookAt(P.x, 1.35, P.z);
+    const dir = v3.set(P.x - L.x, 0, P.z - L.z).normalize(), ha = 16 * DEG, len = 3.2, ca = Math.atan2(dir.x, dir.z);
+    const pos = cone.geometry.attributes.position;
+    pos.setXYZ(0, L.x, 0.01, L.z);
+    pos.setXYZ(1, L.x + Math.sin(ca - ha) * len, 0.01, L.z + Math.cos(ca - ha) * len);
+    pos.setXYZ(2, L.x + Math.sin(ca + ha) * len, 0.01, L.z + Math.cos(ca + ha) * len);
+    pos.needsUpdate = true; cone.geometry.computeBoundingSphere();
+    const mxC = (P.x + R.x) / 2, mzC = (P.z + R.z) / 2;
+    st.camera.position.set(mxC + 0.4, 12.5, mzC + 4.2); st.camera.lookAt(mxC + 0.4, 0, mzC + 0.2);
+    st.light(mxC, mzC);
+    st.renderer.render(st.scene, st.camera);
+    cone.visible = tR.visible = tP.visible = false;
+    st.inset(rcam, pip, R.obj);
+    cone.visible = tR.visible = tP.visible = true;
+    const a = new THREE.Vector3(P.x, 1.86, P.z).project(rcam), b = new THREE.Vector3(P.x, 0.95, P.z).project(rcam);
+    const pr = pip.getBoundingClientRect(), hr = host.getBoundingClientRect();
+    const cx = pr.left - hr.left + (a.x + 1) / 2 * pr.width, top = pr.top - hr.top + (1 - a.y) / 2 * pr.height, bot = pr.top - hr.top + (1 - b.y) / 2 * pr.height;
+    const bh = Math.max(10, bot - top), bw = bh * 0.62;
+    lock.hidden = false;
+    Object.assign(lock.style, { left: (cx - bw / 2).toFixed(1) + "px", top: top.toFixed(1) + "px", width: bw.toFixed(1) + "px", height: bh.toFixed(1) + "px" });
+    lock.classList.toggle("busy", dR / Math.max(dt, 1e-3) > 0.05);
+  }
+  tick();
+})();
+
+// ---------- D: a group of three. The AI looks at each possible spot, scores it, drives to the best and takes the shot.
+(async () => {
+  const sec = document.getElementById("psSpot"), host = document.getElementById("psStD"), ttl = document.getElementById("psTtlD");
+  const st = makeStage(host, { shadow: 5, r0: 3.4, r1: 6.8, fov: 30 });
+  const [rg, mg] = await ASSETS;
+  const R = makeRobot(rg);
+  // three people chatting, turned towards each other but opening to the front (+z)
+  const PEOPLE = [[-0.95, 0.05, 0.6], [0.0, -0.45, 0.05], [0.95, 0.1, -0.55]].map(([x, z, f], i) => {
+    const p = makePerson(mg, i === 1 ? "Idle_Loop" : "Idle_Talking_Loop"); p.x = x; p.z = z; p.face = f; st.scene.add(p.obj); return p;
+  });
+  st.scene.add(R.obj);
+  const START = [-3.6, -1.8], H0 = 0.4;
+  // candidate spots round the group, with how well each sees the faces (frontal is best)
+  const CAND = [-1.9, -0.95, 0, 0.95, 1.9].map((a) => {
+    const x = Math.sin(a) * 2.7, z = Math.cos(a) * 2.7 + 0.1;
+    let s = 0;
+    for (const q of PEOPLE) { const [fx, fz] = fwdOf(q.face), dx = x - q.x, dz = z - q.z, dd = Math.hypot(dx, dz); s += Math.max(0, (fx * dx + fz * dz) / dd); }
+    return { x, z, s: s / PEOPLE.length };
+  });
+  const best = CAND.reduce((b, c) => (c.s > b.s ? c : b), CAND[0]);
+  const ringMat = (c) => new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0, depthWrite: false });
+  CAND.forEach((c) => {
+    c.ring = new THREE.Mesh(new THREE.RingGeometry(0.28, 0.31, 48), ringMat(c === best ? 0xff8a3d : 0xffffff));
+    c.ring.rotation.x = -Math.PI / 2; c.ring.position.set(c.x, 0.006, c.z); st.scene.add(c.ring);
+    c.cam = new THREE.PerspectiveCamera(32, 1.5, 0.05, 40);
+    c.cam.position.set(c.x, 1.55, c.z); c.cam.lookAt(0, 1.3, -0.1);
+    c.el = document.createElement("div"); c.el.className = "ps-card" + (c === best ? " ps-best" : "");
+    c.el.innerHTML = '<div class="ps-frame"></div><div class="ps-bar"><b></b></div>';
+    host.append(c.el);
+    c.frame = c.el.querySelector(".ps-frame"); c.bar = c.el.querySelector(".ps-bar b");
+  });
+  const locks = PEOPLE.map(() => { const l = document.createElement("div"); l.className = "ps-lock"; l.hidden = true; host.append(l); return l; });
+  const camA = new THREE.PerspectiveCamera(30, 1, 0.05, 60);
+  const overview = { pos: new THREE.Vector3(4.2, 5.6, 7.4), look: new THREE.Vector3(-0.2, 0.5, 0.3) };
+  // the robot's route: a curve from where it waits to the chosen spot
+  const route = new THREE.CatmullRomCurve3([new THREE.Vector3(START[0], 0, START[1]), new THREE.Vector3(-3.2, 0, 1.4), new THREE.Vector3(best.x - 0.8, 0, best.z + 0.9), new THREE.Vector3(best.x, 0, best.z)]);
+  let prevU = 0;
+  const clock = new THREE.Clock();
+  const tmpP = new THREE.Vector3(), tmpL = new THREE.Vector3(), proj = new THREE.Vector3();
+  function tick() {
+    requestAnimationFrame(tick);
+    const dt = Math.min(clock.getDelta(), 0.05);
+    if (!st.visible) return;
+    const r = sec.getBoundingClientRect();
+    const p = typeof window.__pd === "number" ? window.__pd : cl(-r.top / Math.max(1, r.height - innerHeight));
+    for (const q of PEOPLE) q.update(dt, 0);
+    // drive along the route
+    const u = ease(cl((p - 0.58) / 0.26));
+    const pt = route.getPointAt(u), tg = route.getTangentAt(Math.min(0.999, Math.max(0.001, u)));
+    R.x = pt.x; R.z = pt.z;
+    R.h = u > 0.001 ? Math.atan2(-tg.z, tg.x) : H0;
+    R.roll += Math.abs(u - prevU) * route.getLength(); prevU = u;
+    R.aimAt(0, -0.1, 1);
+    R.place();
+    // camera: overview, then the robot's own view for the shot
+    const shot = ease(cl((p - 0.86) / 0.12));
+    const L = R.lens();
+    tmpP.copy(overview.pos).lerp(L, shot);
+    tmpL.copy(overview.look).lerp(new THREE.Vector3(0, 0.95, -0.1), shot);
+    st.camera.position.copy(tmpP); st.camera.lookAt(tmpL);
+    st.camera.fov = lerp(30, 52, shot); st.camera.updateProjectionMatrix();
+    R.obj.visible = shot < 0.35;
+    ttl.style.opacity = (1 - shot).toFixed(3);
+    st.light(-0.4, 0.2);
+    // candidates: each one appears, shows its view and fills its score; the winner stays, the rest fade
+    CAND.forEach((c, i) => {
+      const t = cl((p - 0.14 - i * 0.07) / 0.06), keep = c === best ? 1 : 1 - ease(cl((p - 0.52) / 0.06));
+      const a = ease(t) * keep * (1 - shot);
+      c.ring.material.opacity = a * (c === best && p > 0.5 ? 1 : 0.6);
+      proj.set(c.x, 1.25, c.z).project(st.camera);
+      const x = (proj.x + 1) / 2 * st.W, y = (1 - proj.y) / 2 * st.H;
+      const cw = c.el.offsetWidth || 168;
+      c.el.style.opacity = a.toFixed(3);
+      c.el.style.transform = "translate(" + (x - cw / 2).toFixed(1) + "px," + (y - cw / 1.5 - 18).toFixed(1) + "px)";
+      c.bar.style.width = (c.s * 100 * ease(cl((p - 0.17 - i * 0.07) / 0.08))).toFixed(1) + "%";
+      c.vis = a > 0.02;
+    });
+    st.renderer.render(st.scene, st.camera);
+    for (const c of CAND) if (c.vis) { for (const q of CAND) q.ring.visible = false; st.inset(c.cam, c.frame, R.obj); for (const q of CAND) q.ring.visible = true; }
+    // the shot: lock boxes on every face
+    locks.forEach((l, i) => {
+      const q = PEOPLE[i];
+      const a = proj.set(q.x, 1.84, q.z).project(st.camera), ay = a.y, ax = a.x;
+      const b = new THREE.Vector3(q.x, 1.52, q.z).project(st.camera);
+      const top = (1 - ay) / 2 * st.H, bot = (1 - b.y) / 2 * st.H, bh = bot - top, bw = bh * 0.85;
+      l.hidden = shot < 0.5;
+      Object.assign(l.style, { left: ((ax + 1) / 2 * st.W - bw / 2).toFixed(1) + "px", top: top.toFixed(1) + "px", width: bw.toFixed(1) + "px", height: bh.toFixed(1) + "px", opacity: ease(cl((shot - 0.5) / 0.4)).toFixed(3) });
+    });
+  }
+  tick();
+})();
 </script>
 <script type="module">
 import * as THREE from "three";
